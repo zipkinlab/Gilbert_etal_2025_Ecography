@@ -31,7 +31,7 @@ path_surveys <- rodent_pathogen$rpt2_pathogentesting |>
                               "OSBS", "SCBI", "SERC", "STEI", "TALL", "TREE", "UKFS", "UNDE", 
                               "WOOD")) |>
   dplyr::select(siteID, plotID, collectDate) |> 
-  dplyr::mutate(collectDate = as.Date(collectDate)) |> 
+  dplyr::mutate(collectDate = lubridate::as_date(collectDate)) |> 
   dplyr::distinct() |> 
   dplyr::rename( path_collect_date = collectDate )
 
@@ -103,11 +103,16 @@ for(i in 1:nrow(site_coords)){
 }
 
 detection_variables <- dplyr::bind_rows(df) |> 
-  dplyr::right_join(
-    survey_key |> 
-      dplyr::select(siteID, date = box_collect_date) |> 
-      dplyr::distinct()) |> 
-  dplyr::select(siteID, collectDate = date, prcp = prcp_mm_day, tmin = tmin_deg_c)
+  # dplyr::right_join(
+  #   survey_key |> 
+  #     dplyr::select(siteID, date = box_collect_date) |> 
+  #     dplyr::distinct()) |> 
+  dplyr::mutate(year = lubridate::year(date), 
+                month = lubridate::month(date), 
+                day = lubridate::day(date)) |> 
+  dplyr::select(siteID,
+                # collectDate = date,
+                year, month, day, prcp = prcp_mm_day, tmin = tmin_deg_c)
 
 setwd(here::here("data/range_maps"))
 
@@ -247,6 +252,12 @@ da_captures <- dplyr::bind_rows( data_expand ) |>
   dplyr::full_join( captures |> 
                       dplyr::select(-collectDate)) |> 
   dplyr::mutate( y = tidyr::replace_na( y, 0 ) ) |> 
+  dplyr::ungroup() |>
+  # there was a weird goof with joining by class "Date"
+  # so instead joining detection variables by year, month, day columns as integers
+  dplyr::mutate(year = lubridate::year(collectDate), 
+                month = lubridate::month(collectDate), 
+                day = lubridate::day(collectDate)) |> 
   dplyr::left_join(detection_variables)
 
 get_z_index <-
