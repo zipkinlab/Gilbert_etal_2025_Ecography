@@ -146,13 +146,6 @@ ggsave(
   dpi = 300
 )
 
-
-label <- tibble::tibble(
-  metric_styled = c(4.5, 4.5), 
-  mean = c(-0.8, 0.75),
-  label = c("Dilution effect", "Amplification effect")
-)
-
 MCMCvis::MCMCsummary( pd_site, params = c("gamma1")) |> 
   tibble::as_tibble(rownames = "param") |> 
   dplyr::select(param, mean, l95 = `2.5%`, u95 = `97.5%`) |> 
@@ -222,10 +215,8 @@ MCMCvis::MCMCsummary( pd_site, params = c("gamma1")) |>
                  axis.ticks.x = element_line(color = "black", size = 0.1),
                  axis.ticks.y = element_blank(),
                  legend.position = "bottom") +
-  ggplot2::guides(color = guide_legend(ncol = 2, reverse = T)) +
-  ggplot2::geom_text(data = label, aes(x = mean, y = metric_styled, label = label),
-                     fontface = "italic", size = 3.7 )
-  
+  ggplot2::guides(color = guide_legend(ncol = 2, reverse = T)) 
+
 setwd(here::here("figures"))
 ggsave(
   "coefficient_plot_v01.png", 
