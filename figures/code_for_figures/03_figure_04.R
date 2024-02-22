@@ -27,10 +27,11 @@ sites <- tibble::tibble(
 
 setwd(here::here("results"))
 
-load("rodent_pathogen_sr_plot_2024-01-05.RData")
+load("rodent_pathogen_sr_plot_2024-01-21.RData")
+sr_plot <- out
 
 setwd(here::here("data"))
-load("neon_cr_data_2024-01-03.RData")
+load("neon_cr_data_2024-01-17.RData")
 
 site_key <- final |>
   dplyr::select(site, siteID) |>
@@ -60,7 +61,7 @@ ggplot() +
   geom_sf( data = site_baseline_ip, aes(geometry = geometry, color = mean), 
            size = 3) +
   scale_color_viridis_c("Infection probability",
-                        limits = c(0, 0.10),
+                        limits = c(0, 0.102),
                         breaks = c(0, 0.05, 0.10)) +
   theme_void() +
   theme(legend.position = "bottom",

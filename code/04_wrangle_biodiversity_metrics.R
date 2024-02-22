@@ -5,11 +5,16 @@ library(reshape2)
 library(vegan)
 
 setwd(here::here("results"))
-load("neon_capture_recapture_results_2024-01-04.RData")
+load("neon_capture_recapture_results_2024-01-19.RData")
 
 N <- MCMCvis::MCMCpstr( out, params = "N", type = "chains" )
 
-iters_to_select <- sample(1:1713, 500, replace = FALSE)
+# select 500 random samples from the posterior to summarize biodiversity metrics
+# ( to save computation time )
+# setting a seed for reproducibility
+# if you select different samples from the posterior, some of the reported values may vary a little
+set.seed(42)
+iters_to_select <- sort(sample(1:4500, 500, replace = FALSE))
 
 N_df <- reshape2::melt( N[[1]], c("sp", "site", "period", "plot", "iter") ) |> 
   dplyr::filter(!is.na(value)) |> 

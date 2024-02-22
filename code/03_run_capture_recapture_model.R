@@ -19,8 +19,19 @@ mu_beta2_st <- rnorm(1, 0, 0.2)
 sd_beta2_st <- rexp(1, 10)
 mu_beta3_st <- rnorm(1, 0, 0.2)
 sd_beta3_st <- rexp(1, 10)
-beta1_st <- array( rnorm(constants$nsp * constants$nsite * max(constants$max_period), mu_beta1_st, sd_beta1_st), 
-                   dim = c(constants$nsp, constants$nsite, max(constants$max_period)))
+mu_beta1_sp_st <- rnorm(constants$nsp, mu_beta1_st, sd_beta1_st )
+sd_beta1_sp_st <- rexp(constants$nsp, 5)
+beta1_st <- array(NA,
+                  dim = c(constants$nsp, constants$nsite, max(constants$max_period), max(constants$max_plot)))
+for(h in 1:constants$nsp){
+  for(s in 1:constants$nsite){
+    for(t in 1:max(constants$max_period)){
+      for(j in 1:max(constants$max_plot)){
+        beta1_st[h,s,t,j] <- rnorm(1, mu_beta1_sp_st[h], sd_beta1_sp_st[h])
+      }
+    }
+  }
+}
 beta2_st <- rnorm(constants$nsp, mu_beta2_st, sd_beta2_st)
 beta3_st <- rnorm(constants$nsp, mu_beta3_st, sd_beta3_st)
 mu_alpha1_st <- rnorm(1, 0, 0.5)
@@ -35,7 +46,6 @@ alpha1_st <- rnorm(constants$nsp, mu_alpha1_st, sd_alpha1_st)
 alpha2_st <- rnorm(constants$nsp, mu_alpha2_st, sd_alpha2_st)  
 alpha3_st <- rnorm(constants$nsp, mu_alpha3_st, sd_alpha3_st)
 alpha4_st <- rnorm(constants$nsp, mu_alpha4_st, sd_alpha4_st)
-
 lambda_st <- N_st <- probs_st <- array(NA,
                                        dim = c(constants$nsp,
                                                constants$nsite,
@@ -45,7 +55,7 @@ for(h in 1:constants$nsp){
   for(s in 1:constants$nsite){ 
     for( t in 1:max(constants$max_period, na.rm = TRUE)){ # t = trapping period (3-day burst)
       for( j in 1:max(constants$max_plot, na.rm = TRUE)) { # j = NEON plotID within site
-        lambda_st[h, s, t, j] <- exp( beta1_st[h,s,t] + beta2_st[h] * data$CANOPY[s,j] + beta3_st[h] * data$CANOPY[s,j]* data$CANOPY[s,j]) * data$in_range[h,s] # CONSTRAIN BY WHETHER OR NOT NEON SITE IS IN SPECIES' RANGE 
+        lambda_st[h, s, t, j] <- exp( beta1_st[h,s,t,j] + beta2_st[h] * data$CANOPY[s,j] + beta3_st[h] * data$CANOPY[s,j]* data$CANOPY[s,j]) * data$in_range[h,s] # CONSTRAIN BY WHETHER OR NOT NEON SITE IS IN SPECIES' RANGE 
         N_st[h, s, t, j] <- rpois(1, lambda_st[h, s, t, j] )
       }
     }
@@ -68,6 +78,8 @@ inits <- function(){
     sd_alpha3 = sd_alpha3_st, 
     mu_alpha4 = mu_alpha4_st, 
     sd_alpha4 = sd_alpha4_st, 
+    mu_beta1_sp = mu_beta1_sp_st,
+    sd_beta1_sp = sd_beta1_sp_st,
     beta1 = beta1_st, 
     beta2 = beta2_st, 
     beta3 = beta3_st,
@@ -83,7 +95,7 @@ inits <- function(){
 }
 
 model.code <- nimbleCode({
-  mu_beta1 ~ dnorm(0, sd = 2)
+  mu_beta1 ~ dnorm(0, sd = 1)
   sd_beta1 ~ dexp(1)
   mu_beta2 ~ dnorm(0, sd = 0.5)
   sd_beta2 ~ dexp(1)
@@ -92,24 +104,26 @@ model.code <- nimbleCode({
   mu_alpha1 ~ dnorm(0, sd = 2)
   sd_alpha1 ~ dexp(1)
   mu_alpha2 ~ dnorm(0, sd = 0.5)
-  sd_alpha2 ~ dexp(1)
+  sd_alpha2 ~ dexp(2.5)
   mu_alpha3 ~ dnorm(0, sd = 0.5)
-  sd_alpha3 ~ dexp(1)
+  sd_alpha3 ~ dexp(2.5)
   mu_alpha4 ~ dnorm(0, sd = 0.5)
-  sd_alpha4 ~ dexp(1)
+  sd_alpha4 ~ dexp(2.5)
   for(h in 1:nsp){
+    mu_beta1_sp[h] ~ dnorm( mu_beta1, sd = sd_beta1 )
+    sd_beta1_sp[h] ~ dexp(2.5)
     beta2[h]  ~ dnorm( mu_beta2,  sd = sd_beta2  )
-    beta3[h]  ~ dnorm( mu_beta3,  sd = sd_beta3   )
+    beta3[h]  ~ dnorm( mu_beta3,  sd = sd_beta3  )
     alpha1[h] ~ dnorm( mu_alpha1, sd = sd_alpha1 )
     alpha2[h] ~ dnorm( mu_alpha2, sd = sd_alpha2 )
     alpha3[h] ~ dnorm( mu_alpha3, sd = sd_alpha3 )
     alpha4[h] ~ dnorm( mu_alpha4, sd = sd_alpha4 )
     for(s in 1:nsite){ 
       for(t in 1:max_period[s]){
-        beta1[h,s,t] ~ dnorm( mu_beta1, sd = sd_beta1 )
         psi[h,s,t] <- sum( lambda[h, s, t, 1:max_plot[s,t]]) / M[h,s]
         for( j in 1:max_plot[s, t] ) { # j = NEON plotID within site
-          lambda[h, s, t, j] <- exp( beta1[h,s,t] + beta2[h] * CANOPY[s,j] + beta3[h]*CANOPY[s,j]*CANOPY[s,j] ) * in_range[h,s] # CONSTRAIN BY WHETHER OR NOT NEON SITE IS IN SPECIES' RANGE 
+          beta1[h,s,t,j] ~ dnorm( mu_beta1_sp[h], sd = sd_beta1_sp[h] )
+          lambda[h, s, t, j] <- exp( beta1[h,s,t,j] + beta2[h] * CANOPY[s,j] + beta3[h]*CANOPY[s,j]*CANOPY[s,j] ) * in_range[h,s] # CONSTRAIN BY WHETHER OR NOT NEON SITE IS IN SPECIES' RANGE 
           N[h, s, t, j] ~ dpois( lambda[h, s, t, j] )
           probs[h, s, t, j] <- lambda[h, s, t, j] / sum( lambda[h, s, t, 1:max_plot[s, t]] )
         }
@@ -130,6 +144,7 @@ params <- c(
   "mu_beta1", "sd_beta1", 
   "mu_beta2", "sd_beta2", 
   "mu_beta3", "sd_beta3",
+  "mu_beta1_sp", "sd_beta1_sp",
   "beta1", "beta2", "beta3",
   "mu_alpha1", "sd_alpha1", 
   "mu_alpha2", "sd_alpha2", 
@@ -140,9 +155,9 @@ params <- c(
   "N")
 
 nc <- 3
-nburn <- 75000
-ni <- nburn + 100000
-nt <- 175
+nburn <- 100000
+ni <- nburn + 300000
+nt <- 200
 
 start <- Sys.time()
 cl <- makeCluster(nc)
