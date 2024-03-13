@@ -133,7 +133,7 @@ ________________________________________________________________________________
     | site | NEON site index (numeric) |
     | max_plot | Maximum plot trapped during a given bout |
 
-  * [neon_mammal_box_trapping_v01.RData](./data/neon_mammal_box_trapping_v01.RData) Downloaded small mammal box trapping data; see [NEON documentation](https://data.neonscience.org/data-products/DP1.10072.001) for detail
-  * [neon_mammal_sequences_v01.RData](./data/neon_mammal_sequences_v01.RData) Downloaded small mammal DNA sequence data; see [NEON documention](https://data.neonscience.org/data-products/DP1.10076.001) for detail
-  * [neon_mammal_tick_pathogen_v01.RData](./data/neon_mammal_tick_pathogen_v01.RData) Downloaded small mammal tick pathogen screening data; see [NEON documentation](https://data.neonscience.org/data-products/DP1.10064.002) for detail
+  * [neon_mammal_box_trapping_v01.RData](./data/neon_mammal_box_trapping_v01.RData) Small mammal box trapping data; see [NEON documentation](https://data.neonscience.org/data-products/DP1.10072.001) for detail
+  * [neon_mammal_sequences_v01.RData](./data/neon_mammal_sequences_v01.RData) Small mammal DNA sequence data; see [NEON documention](https://data.neonscience.org/data-products/DP1.10076.001) for detail
+  * [neon_mammal_tick_pathogen_v01.RData](./data/neon_mammal_tick_pathogen_v01.RData) Small mammal tick pathogen screening data; see [NEON documentation](https://data.neonscience.org/data-products/DP1.10064.002) for detail
 
