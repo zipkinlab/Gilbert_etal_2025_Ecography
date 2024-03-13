@@ -144,6 +144,9 @@ ________________________________________________________________________________
    * [02_figure_02_figure_03.R](./figures/code_for_figures/02_figure_02_figure_03.R) Create Figure 3 and 4 (Coefficient plot and marginal effect plot of species richness)
    * [03_figure_04.R](./figures/code_for_figures/03_figure_04.R) Create Figure 5 (Map of baseline infection probability)
    * [04_figure_s01.R](./figures/code_for_figures/04_figure_s01.R) Create Figure 2 (Map of biodiversity metrics)       
-* b
-
+* [biodiversity_map_v01.png](./figures/biodiversity_map_v01.png) Figure 2
+* [coefficient_plot_v01.png](./figures/coefficient_plot_v01.png) Figure 3
+* [figure_01.pptx](./figures/figure_01.pptx) Figure 1 (PPT file for some post hoc editing)
+* [map_of_baseline_ip.png](./figures/map_of_baseline_ip.png) Figure 5
+* [species_richness_effect_v01.png](./figures/species_richness_effect_v01.png) Figure 4
 
