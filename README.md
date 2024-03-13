@@ -60,4 +60,36 @@ ________________________________________________________________________________
     | shan_site_sd | Posterior standard deviation of Shannon diversity for the entire NEON site |
     | shan_plot_mean | Posterior mean of Shannon diversity for NEON plot |
     | shan_plot_sd | Posterior standard deviation of Shannon diversity for NEON plot |
-   
+
+* [neon_cr_data_2024-01-17.RData](./data/neon_cr_data_2024-01-17.RData) Formatted data ready to go into model; .RData object with four items
+   * **constants** Constants for model
+     
+    | Variable name | Meaning |
+    |---------------|---------|
+    | nsp | Number of species |
+    | nsite | Number of NEON sites |
+    | max_plot | Matrix reporting the maximum number of plots trapped for a site-bout combination |
+    | M | Total number of individuals (real and augmented) for each site-species combination |
+    | max_period | Vector reporting the maximum trapping bout trapped for each site |
+    | nz | Number of "latent existence states" |
+    | species_z | Species identifier used for indexing in z loop |
+    | site_z | Site identifier used for indexing in z loop |
+    | period_z | Period identifier used for indexing in z loop |
+    | max_plot_z | Identifier for maximum plot for indexing in z loop |
+    | ny | Length of detection/nondetection data loop |
+    | species_y | Species identifier used for indexing in y loop |
+    | z_index | Indexes latent Z state within the y loop |
+  
+   * **data** Data for model
+
+    | Variable name | Meaning |
+    |---------------|---------|
+    | y | Vector of detection-nondetection data (capture history) |
+    | TMIN | Minimum temperature on day of trapping (z-standardized) |
+    | PRCP | Precipitation on the day of trapping (z-standardized) |
+    | in_range | Matrix reporting whether (1) or not (0) a NEON site falls within the range of a given species |
+    | plot | Plot identifier for where an individual was trapped (NA for augmented individuals) |
+    | CANOPY | Matrix with mean percent canopy cover within a 500 m radius of the center of the NEON plot (z-standardized) |
+
+   * **final** Dataframe from which some of the data and constants are pulled
+   * **get_z_index** Dataframe from which ssome of the data and constants are pulled     
