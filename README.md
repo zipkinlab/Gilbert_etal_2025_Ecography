@@ -29,4 +29,26 @@ ________________________________________________________________________________
 
 ### [data](./data): Contains data for analyses 
  * [range_maps](./data/range_maps) Folder with IUCN range maps for the species included in the analysis
- * [NEON_canopy_all_sites.csv](./data/NEON_canopy_all_sites.csv)
+ * [NEON_canopy_all_sites.csv](./data/NEON_canopy_all_sites.csv) Mean percent canopy cover (NLCD) within a 500 m buffer of NEON plot (calculated from Google Earth Engine). Has columns for NEON siteID, plotID, and "mean", which is the mean percent canopy cover
+ * [PanTHERIA_1-0_WR05_Aug2008.txt](./data/PanTHERIA_1-0_WR05_Aug2008.txt) PanTHERIA database
+ * [disease_with_biodiversity_metrics_v01.csv](./data/disease_with_biodiversity_metrics_v01.csv) Formatted infection presence / host biodiversity data. Metadata information below
+   
+   | Variable name | Meaning |
+    |---------------|---------|
+    | siteID | NEON site (text) |
+    | site | NEON site (numeric) |
+    | plotID | NEON plot (text) |
+    | plot | NEON plot (numeric) |
+    | period | Trapping bout |
+    | scientificName | Scientific name of individual screened for Lyme infection |
+    | sp | Species numeric code for individual screened for Lyme infection |
+    | tagID | Unique identifier for individual small mammal |
+    | positive | Indicates whether or not individual tested positive for Lyme (1) or not (0) |
+    | sr_site_mean | Posterior mean of species richness for the entire NEON site |
+    | sr_site_sd | Posterior standard deviation of species richness for the entire NEON site |
+    | sr_plot_mean | Posterior mean of species richness for NEON plot |
+    | sr_plot_sd | Posterior standard deviation of species richness for NEON plot |
+    | pd_site_mean | Posterior mean of <i>Peromyscus</i> dominance for the entire NEON site |
+    | pd_site_sd | Posterior standard deviation of Peromyscus dominance for the entire NEON site |
+    | pd_plot_mean | Posterior mean of Peromyscus dominance for NEON plot |
+    | pd_plot_sd | Posterior standard deviation of Peromyscus dominance for NEON plot |
