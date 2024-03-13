@@ -29,7 +29,7 @@ ________________________________________________________________________________
 
 ### [data](./data): Contains data for analyses 
  * [range_maps](./data/range_maps) Folder with IUCN range maps for the species included in the analysis
- * [NEON_canopy_all_sites.csv](./data/NEON_canopy_all_sites.csv) Mean percent canopy cover (NLCD) within a 500 m buffer of NEON plot (calculated from Google Earth Engine). Has columns for NEON siteID, plotID, and "mean", which is the mean percent canopy cover
+ * [NEON_canopy_all_sites.csv](./data/NEON_canopy_all_sites.csv) Mean % canopy cover (NLCD) within a 500 m buffer of NEON plot (calculated from Google Earth Engine). Has columns for NEON siteID, plotID, and "mean", which is the mean % canopy cover
  * [PanTHERIA_1-0_WR05_Aug2008.txt](./data/PanTHERIA_1-0_WR05_Aug2008.txt) PanTHERIA database
  * [disease_with_biodiversity_metrics_v01.csv](./data/disease_with_biodiversity_metrics_v01.csv) Formatted infection presence / host biodiversity data. Metadata information below
    
@@ -136,4 +136,9 @@ ________________________________________________________________________________
   * [neon_mammal_box_trapping_v01.RData](./data/neon_mammal_box_trapping_v01.RData) Small mammal box trapping data; see [NEON documentation](https://data.neonscience.org/data-products/DP1.10072.001) for detail
   * [neon_mammal_sequences_v01.RData](./data/neon_mammal_sequences_v01.RData) Small mammal DNA sequence data; see [NEON documention](https://data.neonscience.org/data-products/DP1.10076.001) for detail
   * [neon_mammal_tick_pathogen_v01.RData](./data/neon_mammal_tick_pathogen_v01.RData) Small mammal tick pathogen screening data; see [NEON documentation](https://data.neonscience.org/data-products/DP1.10064.002) for detail
+
+### [figures](./figures): Contains figures and code for creating figures
+
+* [code_for_figures](./figures/code_for_figures) Folder with scripts to create figures
+
 
