@@ -133,3 +133,5 @@ ________________________________________________________________________________
     | site | NEON site index (numeric) |
     | max_plot | Maximum plot trapped during a given bout |
 
+  * [neon_mammal_box_trapping_v01.RData](./data/neon_mammal_box_trapping_v01.RData) Downloaded small mammal box trapping data; see [NEON documentation](https://data.neonscience.org/data-products/DP1.10072.001) for detail
+
