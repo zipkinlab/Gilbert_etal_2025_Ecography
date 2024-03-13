@@ -9,3 +9,8 @@
 __________________________________________________________________________________________________________________________________________
 
 ## Abstract
+
+## Repository Directory
+
+### [code](./code): Contains code for downloading, formatting, analyzing, and visualizing data
+ * [01_download_neon_data.R](./code/01_download_neon_data.R) Script to download relevant NEON data products
