@@ -49,6 +49,15 @@ ________________________________________________________________________________
     | sr_plot_mean | Posterior mean of species richness for NEON plot |
     | sr_plot_sd | Posterior standard deviation of species richness for NEON plot |
     | pd_site_mean | Posterior mean of <i>Peromyscus</i> dominance for the entire NEON site |
-    | pd_site_sd | Posterior standard deviation of Peromyscus dominance for the entire NEON site |
-    | pd_plot_mean | Posterior mean of Peromyscus dominance for NEON plot |
-    | pd_plot_sd | Posterior standard deviation of Peromyscus dominance for NEON plot |
+    | pd_site_sd | Posterior standard deviation of <i>Peromyscus</i> dominance for the entire NEON site |
+    | pd_plot_mean | Posterior mean of <i>Peromyscus</i> dominance for NEON plot |
+    | pd_plot_sd | Posterior standard deviation of <i>Peromyscus</i> dominance for NEON plot |
+    | n_site_mean | Posterior mean of total abundance for the entire NEON site |
+    | n_site_sd | Posterior standard deviation of total abundance for the entire NEON site |
+    | n_plot_mean | Posterior mean of total abundance for NEON plot |
+    | n_plot_sd | Posterior standard deviation of total abundance for NEON plot |
+    | shan_site_mean | Posterior mean of Shannon diversity for the entire NEON site |
+    | shan_site_sd | Posterior standard deviation of Shannon diversity for the entire NEON site |
+    | shan_plot_mean | Posterior mean of Shannon diversity for NEON plot |
+    | shan_plot_sd | Posterior standard deviation of Shannon diversity for NEON plot |
+   
