@@ -140,5 +140,10 @@ ________________________________________________________________________________
 ### [figures](./figures): Contains figures and code for creating figures
 
 * [code_for_figures](./figures/code_for_figures) Folder with scripts to create figures
+   * [01_figure_01.R](./figures/code_for_figures/01_figure_01.R) Create figure 1 (Map of NEON site/plot sampling structure)
+   * [02_figure_02_figure_03.R](./figures/code_for_figures/02_figure_02_figure_03.R) Create Figure 3 and 4 (Coefficient plot and marginal effect plot of species richness)
+   * [03_figure_04.R](./figures/code_for_figures/03_figure_04.R) Create Figure 5 (Map of baseline infection probability)
+   * [04_figure_s01.R](./figures/code_for_figures/04_figure_s01.R) Create Figure 2 (Map of biodiversity metrics)       
+* b
 
 
