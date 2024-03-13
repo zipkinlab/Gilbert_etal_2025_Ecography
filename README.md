@@ -92,4 +92,44 @@ ________________________________________________________________________________
     | CANOPY | Matrix with mean percent canopy cover within a 500 m radius of the center of the NEON plot (z-standardized) |
 
    * **final** Dataframe from which some of the data and constants are pulled
-   * **get_z_index** Dataframe from which ssome of the data and constants are pulled     
+ 
+    | Variable name | Meaning |
+    |---------------|---------|
+    | scientificName | Scientific name of individual |
+    | siteID |  NEON site (character) |
+    | ind | Identifier for individual (numeric) |
+    | period | Trapping bout identifier (numeric) |
+    | rep | Replicate trapping night within bout (numeric |
+    | collectDate | Date of trapping |
+    | plotID | NEON plot (character) |
+    | nreps | Number of replicate trapping nights for a bout-plot combination |
+    | tagID | Identifier for individual (character) |
+    | positive | Indicates whether or not individual tested positive for Lyme (1) or not (0). NA for individuals not tested |
+    | y | Vector of detection-nondetection data (capture history) |
+    | year | Year of trapping |
+    | month | Month of trapping |
+    | day | Day of trapping |
+    | prcp | Precipitation (mm) on the day of trapping |
+    | tmin | Minimum temperature (C) on day of trapping |
+    | plot | Plot identifier for where individual was trapped (NA for augmented individuals |
+    | plotst | Starting value for plot (known for trapped individuals; randomly assigned for augmented |
+    | z_index | Index for the latent-z state for an individual-bout combination |
+    | sp | Species index (numeric) |
+    | max_plot | Maximum plot trapped during a given bout |
+    | in_range | Binary variable reporting whether (1) or not (0) a NEON site falls within the range of a given species |
+
+   * **get_z_index** Dataframe from which ssome of the data and constants are pulled. Simplified version of **final** without replicate information
+
+    | Variable name | Meaning |
+    |---------------|---------|
+    | siteID |  NEON site (character) |
+    | period | Trapping bout identifier (numeric) |
+    | plotID | NEON plot (character) |
+    | plot | Plot identifier for where individual was trapped (NA for augmented individuals |
+    | plotst | Starting value for plot (known for trapped individuals; randomly assigned for augmented |
+    | scientificName | Scientific name of individual |
+    | z_index | Index for the latent-z state for an individual-bout combination |
+    | sp | Species index (numeric) |
+    | site | NEON site index (numeric) |
+    | max_plot | Maximum plot trapped during a given bout |
+
