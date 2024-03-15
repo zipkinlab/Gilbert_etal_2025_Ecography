@@ -150,3 +150,7 @@ ________________________________________________________________________________
 * [map_of_baseline_ip.png](./figures/map_of_baseline_ip.png) Figure 5
 * [species_richness_effect_v01.png](./figures/species_richness_effect_v01.png) Figure 4
 
+### [results](./results): Contains results files
+* neon_capture_recapture_results_2023-01-19.RData. Output from MSSCR model (Step 1). File too large for GitHub: [download link](https://1drv.ms/u/s!AtvYBfNq7AMkg4MIYBlAZD9589vNgw?e=8rjb6c)
+
+
