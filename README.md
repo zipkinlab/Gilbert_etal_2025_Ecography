@@ -152,5 +152,11 @@ ________________________________________________________________________________
 
 ### [results](./results): Contains results files
 * neon_capture_recapture_results_2023-01-19.RData. Output from MSSCR model (Step 1). File too large for GitHub: [download link](https://1drv.ms/u/s!AtvYBfNq7AMkg4MIYBlAZD9589vNgw?e=8rjb6c)
-
-
+* [rodent_pathogen_n_plot_2024-01-21.RData](./results/rodent_pathogen_n_plot_2024-01-21.RData) Results from Step 2 model (total abundance, local community)
+* [rodent_pathogen_n_site_2024-01-21.RData](./results/rodent_pathogen_n_site_2024-01-21.RData) Results from Step 2 model (total abundance, metacommunity)
+* [rodent_pathogen_pd_plot_2024-01-21.RData](./results/rodent_pathogen_pd_plot_2024-01-21.RData) Results from Step 2 model (<i>Peromyscus</i> dominance, local community)
+* [rodent_pathogen_pd_site_2024-01-21.RData](./results/rodent_pathogen_pd_site_2024-01-21.RData) Results from Step 2 model (<i>Peromyscus</i> dominance, metacommunity)
+* [rodent_pathogen_shan_plot_2024-01-21.RData](./results/rodent_pathogen_shan_plot_2024-01-21.RData) Results from Step 2 model (Shannon diversity, local community)
+* [rodent_pathogen_shan_site_2024-01-21.RData](./results/rodent_pathogen_shan_site_2024-01-21.RData) Results from Step 2 model (Shannon diversity, metacommunity)
+* [rodent_pathogen_sr_plot_2024-01-21.RData](./results/rodent_pathogen_sr_plot_2024-01-21.RData) Results from Step 2 model (species richness, local community)
+* [rodent_pathogen_sr_site_2024-01-21.RData](./results/rodent_pathogen_sr_site_2024-01-21.RData) Resutls from Step 2 model (species richness, metacommunity)
