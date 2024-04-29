@@ -3,48 +3,67 @@ library(parallel)
 library(nimble)
 
 # setwd(here::here("data"))
-final <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv")
+final <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv") %>% 
+  dplyr::group_by(scientificName) %>% 
+  dplyr::mutate(sp_disease = cur_group_id()) %>%
+  dplyr::ungroup() %>% 
+  dplyr::mutate( alpha = ( pd_plot_mean^2 * (1 - pd_plot_mean) - pd_plot_sd^2 * pd_plot_mean ) / pd_plot_sd^2) %>% 
+  dplyr::mutate( beta = (alpha * (1 - pd_plot_mean)) / pd_plot_mean )
 
 data <- list(
   y = final$positive, 
-  pd_plot_mean = final$pd_plot_mean, 
-  pd_plot_sd = final$pd_plot_sd)
+  pd_plot_alpha = final$alpha, 
+  pd_plot_beta = final$beta)
 
 constants <- list(
+  nsp = length(unique(final$sp_disease)),
   nsite = length(unique(final$site)), 
   nind = nrow(final), 
-  site = final$site)
+  site = final$site,
+  sp = final$sp_disease)
 
 code <- nimbleCode({
   mu_gamma0 ~ dnorm(0, sd = 1)
   sd_gamma0 ~ dexp(1)
-  gamma1 ~ dnorm(0, sd = 0.5)
-  for( i in 1:nsite){
+  sd_epsilon ~ dexp(1)
+  gamma1 ~ dnorm(0, sd = 1)
+  for(i in 1:nsp){
     gamma0[i] ~ dnorm( mu_gamma0, sd = sd_gamma0 )
+  }
+  for( i in 1:nsite){
+    epsilon[i] ~ dnorm( 0, sd = sd_epsilon )
   }
   mean_pd <- mean( pd_plot[1:nind] )
   sd_pd <- sd( pd_plot[1:nind] )
+  
   for( i in 1:nind ) {
-    pd_plot[i] ~ T( dnorm( pd_plot_mean[i], sd = pd_plot_sd[i] ), 0, 36 )
+    pd_plot[i] ~ dbeta( pd_plot_alpha[i], pd_plot_beta[i] )
     pd_plot_scaled[i] <- ( pd_plot[i] - mean_pd ) / sd_pd
     y[i] ~ dbern( kappa[i] )
-    logit( kappa[i] ) <- gamma0[ site[i] ] + gamma1 * pd_plot_scaled[i]
+    logit( kappa[i] ) <- gamma0[ sp[i] ] + gamma1 * pd_plot_scaled[i] + epsilon[site[i]]
   }
 })
 
 inits <- function(){
   list(
     mu_gamma0 = rnorm(1, 0, 0.1),
-    pd_plot = data$pd_plot_mean,
-    mean_pd = mean( data$pd_plot_mean), 
-    sd_pd = mean( data$pd_plot_sd),
+    pd_plot = final$pd_plot_mean,
+    mean_pd = mean( final$pd_plot_mean), 
+    sd_pd = mean( final$pd_plot_sd),
     sd_gamma0 = runif(1, 0, 1), 
     gamma1 = rnorm(1, 0, 0.25), 
-    gamma0 = rnorm(constants$nsite, 0, 1)
+    gamma0 = rnorm(constants$nsp, 0, 1),
+    sd_epsilon = rexp(1),
+    epsilon = rnorm(constants$nsite, 0, 1)
   )
 }
 
-params <- c("mu_gamma0", "sd_gamma0", "gamma1", "gamma0", "mean_pd", "sd_pd")
+params <- c("mu_gamma0", "sd_gamma0", "gamma1", "gamma0", "sd_epsilon", "epsilon", "mean_pd", "sd_pd")
+
+# model <- nimbleModel(code = code,
+#                      constants = constants,
+#                      data = data,
+#                      inits = inits())
 
 nc <- 3
 nb <- 10000

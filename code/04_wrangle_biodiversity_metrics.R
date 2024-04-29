@@ -5,7 +5,7 @@ library(reshape2)
 library(vegan)
 
 setwd(here::here("results"))
-load("neon_capture_recapture_results_2024-01-19.RData")
+load("neon_capture_recapture_results_2024-04-11.RData")
 
 N <- MCMCvis::MCMCpstr( out, params = "N", type = "chains" )
 
@@ -14,7 +14,7 @@ N <- MCMCvis::MCMCpstr( out, params = "N", type = "chains" )
 # setting a seed for reproducibility
 # if you select different samples from the posterior, some of the reported values may vary a little
 set.seed(42)
-iters_to_select <- sort(sample(1:4500, 500, replace = FALSE))
+iters_to_select <- sort(sample(1:3000, 500, replace = FALSE))
 
 N_df <- reshape2::melt( N[[1]], c("sp", "site", "period", "plot", "iter") ) |> 
   dplyr::filter(!is.na(value)) |> 
@@ -85,6 +85,9 @@ shannon_plot <- N_df |>
   dplyr::group_by(site, period, plot) |> 
   dplyr::summarise( shan_plot_mean = mean(shannon), 
                     shan_plot_sd = sd(shannon))
+
+setwd(here::here("data"))
+final <- readr::read_csv("neon_model_data_update.csv")
 
 disease_biodiversity <- final |> 
   dplyr::ungroup() |> 

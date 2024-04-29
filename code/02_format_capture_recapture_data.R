@@ -48,7 +48,8 @@ mam_surveys <- boxtrap$mam_pertrapnight |>
   dplyr::rename(box_collect_date = collectDate)
 
 # master list of site x plot x sampling dates assigned to site-level periods
-survey_key <- full_join( path_surveys, mam_surveys ) |> 
+survey_key <- full_join( path_surveys, mam_surveys ) |>
+  dplyr::filter(!siteID == "LENO") |> 
   dplyr::mutate( diff = abs(as.numeric(box_collect_date - path_collect_date))) |> 
   dplyr::filter( diff <= 10) |>
   dplyr::select(siteID, box_collect_date ) |> 
@@ -59,11 +60,34 @@ survey_key <- full_join( path_surveys, mam_surveys ) |>
                  dlag = tidyr::replace_na(dlag, 0), 
                  period = base::cumsum(dlag > 7) + 1) |> 
   dplyr::select(-dlag) |> 
-  dplyr::full_join(mam_surveys) |> 
-  dplyr::full_join( path_surveys ) |> 
+  dplyr::left_join(mam_surveys) |> 
+  dplyr::left_join( path_surveys ) |> 
   dplyr::mutate( diff = abs(as.numeric(box_collect_date - path_collect_date))) |> 
   dplyr::filter( diff <= 10 ) |> 
-  dplyr::select( siteID, plotID, period, box_collect_date, path_collect_date )
+  dplyr::select( siteID, plotID, period, box_collect_date, path_collect_date ) |> 
+  dplyr::select(siteID, plotID) |>
+  dplyr::distinct() |>
+  dplyr::arrange(siteID, plotID) |>
+  dplyr::group_by(siteID) |>
+  dplyr::mutate(plot = row_number()) |> 
+  dplyr::full_join(
+    full_join( path_surveys, mam_surveys ) |>
+      dplyr::filter(!siteID == "LENO") |> 
+      dplyr::mutate( diff = abs(as.numeric(box_collect_date - path_collect_date))) |> 
+      dplyr::filter( diff <= 10) |>
+      dplyr::select(siteID, box_collect_date ) |> 
+      dplyr::distinct() |> 
+      dplyr::arrange(siteID, box_collect_date ) |> 
+      dplyr::group_by( siteID ) |> 
+      dplyr::mutate( dlag = base::as.numeric( box_collect_date - dplyr::lag(box_collect_date)),
+                     dlag = tidyr::replace_na(dlag, 0), 
+                     period = base::cumsum(dlag > 7) + 1) |> 
+      dplyr::select(-dlag) |> 
+      dplyr::left_join(mam_surveys) |> 
+      dplyr::left_join( path_surveys ) |> 
+      dplyr::mutate( diff = abs(as.numeric(box_collect_date - path_collect_date))) |> 
+      dplyr::filter( diff <= 10 ) |> 
+      dplyr::select( siteID, plotID, period, box_collect_date, path_collect_date ))
 
 site_dates <- survey_key |> 
   tidyr::pivot_longer( box_collect_date:path_collect_date, names_to = "name", values_to = "collectDate") |> 
@@ -81,6 +105,22 @@ site_coords <- survey_key |>
   dplyr::distinct() |> 
   dplyr::summarise( xcoord = mean(xcoord), 
                     ycoord = mean(ycoord))
+
+plot_coords <- survey_key |> 
+  dplyr::select(siteID, plotID, collectDate = box_collect_date) |> 
+  dplyr::distinct() |> 
+  dplyr::left_join(boxtrap[[5]]) |> 
+  dplyr::select(siteID, plotID, xcoord = decimalLongitude, ycoord = decimalLatitude) |> 
+  dplyr::distinct()
+
+plot_coords |> 
+  st_as_sf(coords = c("xcoord", "ycoord"), 
+           crs = 4326) |> 
+  group_by(siteID) |> 
+  summarise(geometry = st_union(geometry)) |> 
+  st_convex_hull() |> 
+  st_area() |> 
+  mean()
 
 df <- list(list())
 for(i in 1:nrow(site_coords)){
@@ -230,101 +270,111 @@ figure_m <- captures |>
   dplyr::filter(!is.na(y)) |> 
   dplyr::group_by(siteID, scientificName) |> 
   dplyr::summarise( max_ind = max(ind))   |> 
-  dplyr::mutate( M = max_ind + 100 )
+  dplyr::mutate(M = ceiling(max_ind / 0.20)) |>
+  # dplyr::mutate( M = max_ind + 100 ) |>
+  dplyr::full_join(site_in_range) |> 
+  dplyr::arrange(siteID, scientificName) |> 
+  dplyr::mutate(M = ifelse(is.na(M) | M < 20, 20, M))
 
-data_expand <- list( list() )
-for( i in 1:base::nrow(figure_m)){
-  data_expand[[i]] <- tibble::tibble(
-    scientificName = base::rep( figure_m[[i, "scientificName"]], figure_m[[i, "M"]]),
-    siteID = base::rep( figure_m[[i, "siteID"]], figure_m[[i, "M"]]),
-    ind = 1:figure_m[[i, "M"]] )
-}  
-
-da_captures <- dplyr::bind_rows( data_expand ) |> 
-  dplyr::full_join(
-    captures |> 
-      dplyr::filter(!is.na(y)) |> 
-      dplyr::select(siteID, period, rep, collectDate, scientificName) |> 
-      dplyr::distinct() |> 
-      dplyr::group_by(siteID, period, rep, scientificName) |> 
-      dplyr::summarise(collectDate = median(collectDate))) |>
-  dplyr::arrange( siteID, period, rep, scientificName, ind ) |> 
-  dplyr::full_join( captures |> 
-                      dplyr::select(-collectDate)) |> 
-  dplyr::mutate( y = tidyr::replace_na( y, 0 ) ) |> 
-  dplyr::ungroup() |>
-  # there was a weird goof with joining by class "Date"
-  # so instead joining detection variables by year, month, day columns as integers
-  dplyr::mutate(year = lubridate::year(collectDate), 
-                month = lubridate::month(collectDate), 
-                day = lubridate::day(collectDate)) |> 
-  dplyr::left_join(detection_variables)
-
-get_z_index <-
-  da_captures |> 
-  dplyr::select(siteID, plotID, period, scientificName, ind, positive ) |> 
+z_ind <- survey_key |> 
+  dplyr::select(siteID, period) |> 
   dplyr::distinct() |> 
-  ( function(x) tibble::add_column(x, z_index = 1:base::nrow(x)))() |> 
+  dplyr::full_join(figure_m) |> 
+  dplyr::rowwise() |> 
+  dplyr::mutate(ind = list(1:M)) |> 
+  tidyr::unnest(cols = c(ind)) |> 
+  dplyr::select(siteID, period, scientificName, ind ) |> 
   dplyr::full_join(
     captures |> 
-      dplyr::ungroup() |> 
-      dplyr::select(siteID, plotID) |> 
-      dplyr::distinct() |> 
-      dplyr::arrange(plotID) |> 
-      dplyr::group_by(siteID) |> 
-      dplyr::mutate(plot = dplyr::row_number()) |> 
-      dplyr::full_join(
-        captures |> 
-          dplyr::ungroup() |> 
-          dplyr::select(siteID, plotID, period) |> 
-          dplyr::distinct()
-      ) |> 
-      dplyr::group_by(siteID, period) |> 
-      dplyr::mutate(plots_sampled = list(unique(plot))) |> 
-      dplyr::select(-plotID, -plot) |> 
-      dplyr::distinct()) |> 
+      dplyr::select(siteID, plotID, period, rep, scientificName, ind, y) |> 
+      dplyr::group_by(siteID, plotID, period, scientificName, ind) |> 
+      dplyr::summarise(y = max(y)) |> 
+      dplyr::select(-y))
+
+da_captures <-
+  survey_key |> 
+  dplyr::select(siteID, plotID, plot, period, collectDate = box_collect_date) |> 
+  dplyr::distinct() |> 
+  dplyr::group_by(siteID, plotID, plot, period) |> 
+  dplyr::mutate(rep = dplyr::row_number(),
+                nreps = max(rep)) |>
   dplyr::ungroup() |> 
-  dplyr::full_join(
+  dplyr::select(siteID, period, rep) |> 
+  dplyr::distinct() |> 
+  dplyr::full_join(figure_m) |> 
+  dplyr::rowwise() |> 
+  dplyr::mutate(ind = list(1:M)) |> 
+  tidyr::unnest(cols = c(ind)) |> 
+  dplyr::select(siteID, period, rep, scientificName, ind) |> 
+  dplyr::left_join(
     captures |> 
-      dplyr::ungroup() |> 
-      dplyr::select(siteID, plotID) |> 
+      dplyr::select(siteID, plotID, period, rep, scientificName, ind, y)) |> 
+  dplyr::mutate( y = tidyr::replace_na( y, 0 )) |> 
+  dplyr::left_join(
+    survey_key |> 
+      dplyr::select(siteID, plotID, plot, period, collectDate = box_collect_date) |> 
       dplyr::distinct() |> 
-      dplyr::arrange(plotID) |> 
-      dplyr::group_by(siteID) |> 
-      dplyr::mutate(plot = dplyr::row_number())) |> 
+      dplyr::group_by(siteID, plotID, period) |> 
+      dplyr::mutate(rep = dplyr::row_number(),
+                    nreps = max(rep)) |> 
+      dplyr::group_by( siteID, period, rep ) |> 
+      dplyr::summarise(meanDate = mean(collectDate)) |> 
+      dplyr::mutate(year = lubridate::year(meanDate), 
+                    month = lubridate::month(meanDate), 
+                    day = lubridate::day(meanDate)) |> 
+      dplyr::select(-meanDate)) |> 
+  dplyr::left_join(detection_variables) |> 
+  dplyr::left_join( 
+    survey_key |> 
+      dplyr::select(siteID, period, plotID, plot) |> 
+      dplyr::distinct() |>
+      dplyr::group_by(siteID, period) |>
+      dplyr::summarise(plots_sampled = list(unique(plot)))) |> 
+  dplyr::inner_join(z_ind) |> 
+  dplyr::left_join(
+    survey_key |>
+      dplyr::select(plotID, plot) |>
+      dplyr::distinct()) |>
+  dplyr::group_by(siteID) |> 
+  dplyr::mutate(site = cur_group_id()) |> 
+  dplyr::ungroup() |>
+  dplyr::group_by(scientificName) |> 
+  dplyr::mutate(sp = cur_group_id()) |> 
+  dplyr::ungroup() |> 
+  dplyr::arrange(site, period, sp, ind )
+
+get_z_index <- da_captures |> 
+  dplyr::select(siteID, site, period, sp, scientificName, ind, plotID, plot, plots_sampled) |> 
+  dplyr::distinct() |> 
   dplyr::rowwise() |> 
   dplyr::mutate(plotst = ifelse(!is.na(plot),
                                 plot, 
                                 sample(plots_sampled, 1, replace = TRUE))) |> 
-  dplyr::select(siteID, period, plotID, plot, plotst, scientificName, ind, z_index) |> 
-  dplyr::group_by(scientificName) |> 
-  dplyr::mutate(sp = dplyr::cur_group_id()) |> 
-  dplyr::group_by(siteID) |> 
-  dplyr::mutate(site = dplyr::cur_group_id()) |> 
-  dplyr::ungroup() |> 
-  dplyr::group_by(siteID, period) |> 
-  dplyr::mutate(max_plot = max(plot, na.rm = TRUE)) |> 
-  dplyr::ungroup() |> 
-  dplyr::arrange( siteID, period, sp, ind )
+  dplyr::arrange(site, period, sp, ind) |> 
+  ( function(x) tibble::add_column(x, z_index = 1:base::nrow(x)))() |> 
+  dplyr::mutate(max_plot = max(plots_sampled))
 
-plot_canopy <- da_captures |>
-  dplyr::full_join(get_z_index) |> 
-  dplyr::left_join(site_in_range) |>
-  dplyr::select(siteID, plotID, plot) |> 
-  dplyr::distinct() |> 
-  dplyr::filter(!is.na(plotID)) |> 
-  dplyr::arrange(siteID, plot) |> 
-  dplyr::left_join(canopy) |>
-  dplyr::group_by(siteID, plotID, plot) |> 
+plot_canopy <- 
+  canopy |> 
+  dplyr::right_join(
+    da_captures |>
+      dplyr::select(siteID, plotID, plot) |>
+      dplyr::distinct() |> 
+      dplyr::filter(!is.na(plotID))) |> 
+  dplyr::group_by(siteID) |> 
+  dplyr::mutate(site = cur_group_id()) |> 
+  dplyr::arrange(site, plot) |> 
+  dplyr::ungroup() |> 
+  dplyr::select(site, plot, pcanopy_500m) |>
+  dplyr::group_by(site, plot) |> 
   dplyr::summarise(pcanopy_500m = mean(pcanopy_500m)) |> 
   dplyr::ungroup() |> 
-  dplyr::mutate(canopy = base::as.numeric( base::scale(pcanopy_500m))) |>
-  dplyr::select(-plotID, -pcanopy_500m) |> 
-  tidyr::pivot_wider(names_from = plot, values_from = canopy) |> 
+  dplyr::mutate(pcanopy_500m = as.numeric(scale(pcanopy_500m))) |> 
+  tidyr::pivot_wider(names_from = plot, values_from = pcanopy_500m) |> 
   dplyr::mutate( across(`1`:`8`, function(x) tidyr::replace_na( x, 0 ) ) ) |>
-  dplyr::select(-siteID) |> 
+  dplyr::select(-site) |> 
   base::as.matrix() |>
-  base::unname()
+  base::unname() 
 
 range_mat <- site_in_range |> 
   dplyr::filter( siteID %in% unique(da_captures$siteID)) |> 
@@ -336,6 +386,7 @@ range_mat <- site_in_range |>
   dplyr::mutate(site = cur_group_id()) |> 
   dplyr::ungroup() |> 
   dplyr::select(sp, site, in_range) |> 
+  dplyr::arrange(sp, site) |> 
   tidyr::pivot_wider(names_from = site, values_from = in_range) |> 
   dplyr::select(-sp) |> 
   as.matrix() |> 
@@ -344,11 +395,7 @@ range_mat <- site_in_range |>
 final <- da_captures |>
   dplyr::full_join(get_z_index) |> 
   dplyr::left_join(site_in_range) |> 
-  dplyr::group_by(scientificName) |> 
-  dplyr::mutate(sp = cur_group_id()) |> 
-  dplyr::group_by(siteID) |> 
-  dplyr::mutate(site = cur_group_id()) |> 
-  dplyr::arrange(siteID, period, sp, ind)
+  dplyr::arrange(site, period, sp, ind) 
 
 max_plot <- get_z_index |> 
   dplyr::select(siteID, period, plot) |>
@@ -359,30 +406,30 @@ max_plot <- get_z_index |>
   dplyr::ungroup() |> 
   dplyr::arrange(siteID) |>
   dplyr::select(-siteID) |> 
-  dplyr::mutate(across(1:max(get_z_index$period, na.rm = TRUE), function(x) ifelse(is.na(x), 1, x))) |> 
+  dplyr::mutate(across(1:max(get_z_index$period, na.rm = TRUE), function(x) ifelse(is.na(x) | x == -Inf, 1, x))) |> 
   base::as.matrix() |> 
   base::unname()
 
 max_period <- get_z_index |> 
-  dplyr::select(siteID, period) |> 
+  dplyr::select(site, period) |> 
   dplyr::distinct() |> 
-  dplyr::group_by(siteID) |> 
+  dplyr::group_by(site) |> 
   dplyr::summarise(max_period = max(period, na.rm = TRUE)) |> 
-  dplyr::arrange(siteID) |>
+  dplyr::arrange(site) |>
   # two sites that have only 1 period. Change it to 2 to protect looping; shouldn't affect things?
   dplyr::mutate(max_period = ifelse(max_period == 1, 2, max_period)) |> 
   dplyr::pull(max_period)
 
-sp_site_M <- figure_m |> 
-  dplyr::arrange(siteID, scientificName) |>
-  dplyr::group_by(siteID) |> 
-  dplyr::mutate(site = cur_group_id()) |>
+sp_site_M <- figure_m |>
+  dplyr::full_join(
+    final |> 
+      dplyr::select(siteID, site, scientificName, sp) |> 
+      dplyr::distinct()) |> 
   dplyr::ungroup() |> 
-  dplyr::select(-siteID, -max_ind) |> 
+  dplyr::select(site, sp, M) |>
+  dplyr::arrange(sp, site) |> 
   tidyr::pivot_wider(names_from = site, values_from = M) |> 
-  dplyr::arrange(scientificName) |> 
-  dplyr::select(-scientificName) |> 
-  dplyr::mutate(across(1:length(unique(figure_m$siteID)), function(x) replace_na(x, 100))) |> 
+  dplyr::select(-sp) |> 
   as.matrix() |> 
   unname()
 
