@@ -25,7 +25,6 @@ ________________________________________________________________________________
  * [10_disease_n_plot_model.R](./code/10_disease_n_plot_model.R) Infection prevalence predicted by total abundance at the local community level
  * [11_disease_shan_plot_model.R](./code/11_disease_shan_plot_model.R) Infection prevalence predicted by Shannon diversity at local community level
  * [12_disease_shan_site_model.R](./code/12_disease_shan_site_model.R) Infection prevalence predicted by Shannon diversity at metacommunity level
- * [13_results_stats.R](./code/13_results_stats.R) Script to grab statistics that are reported in the results
 
 ### [data](./data): Contains data for analyses 
  * [range_maps](./data/range_maps) Folder with IUCN range maps for the species included in the analysis
