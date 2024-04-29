@@ -272,7 +272,7 @@ for_plot <- sr |>
 
 setwd(here::here("figures"))
 ggplot2::ggsave(
-  "biodiversity_map_v01.png", 
+  "figure_02.png", 
   width = 8, 
   height = 3, 
   units = "in", 
