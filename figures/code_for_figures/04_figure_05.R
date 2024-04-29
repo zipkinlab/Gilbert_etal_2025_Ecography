@@ -25,52 +25,43 @@ sites <- tibble::tibble(
              45.8091743333333, 32.90788275, 45.4896738571429, 39.0467195, 
              46.236238875, 47.1379026363636))
 
-setwd(here::here("results"))
-
-load("rodent_pathogen_sr_plot_2024-01-21.RData")
-sr_plot <- out
-
 setwd(here::here("data"))
-load("neon_cr_data_2024-01-17.RData")
+d <- read_csv("disease_with_biodiversity_metrics_v01.csv")
 
-site_key <- final |>
-  dplyr::select(site, siteID) |>
-  dplyr::distinct()
-
-site_baseline_ip <- MCMCvis::MCMCpstr( sr_plot, params = c("gamma0"), type = "chains")[[1]] |>
-  tibble::as_tibble(rownames = "site") |>
-  tidyr::pivot_longer(2:3001, names_to = "iter", values_to = "gamma0") |>
-  dplyr::mutate(site = stringr::str_remove(site, "gamma0")) |>
-  dplyr::mutate(site = readr::parse_number(site)) |> 
-  dplyr::mutate(p = nimble::ilogit(gamma0)) |> 
-  dplyr::group_by(site) |> 
-  dplyr::summarise(mean = mean(p), 
-                   l95 = quantile(p, c(0.025)),
-                   u95 = quantile(p, c(0.975))) |> 
-  dplyr::full_join(site_key) |> 
+dis <- d |> 
+  group_by(siteID) |> 
+  summarise(npos = sum(positive), 
+            n = sum(!is.na(positive))) |> 
+  dplyr::mutate(prop = npos / n) |> 
   dplyr::left_join(sites) |> 
   sf::st_as_sf(coords = c("xcoord", "ycoord"), 
-               crs = 4326)
-
-site_baseline_ip |> 
-  dplyr::ungroup() |> 
-  filter(mean == min(mean)  | mean == max(mean))
+               crs = 4326) |> 
+  dplyr::rename(`Number tested` = n)
 
 ggplot() + 
   geom_sf( data = usa, aes(geometry = geom)) +
-  geom_sf( data = site_baseline_ip, aes(geometry = geometry, color = mean), 
-           size = 3) +
-  scale_color_viridis_c("Infection probability",
-                        limits = c(0, 0.102),
-                        breaks = c(0, 0.05, 0.10)) +
-  theme_void() +
-  theme(legend.position = "bottom",
-        legend.box.margin = margin(0,0,5,0)) +
-  guides(color = guide_colorbar(title.position = "top"))
+  geom_sf( data = dis,
+           aes(geometry = geometry, fill = prop, size = `Number tested`),
+           pch = 21, 
+           color = "black") +
+  scale_size(breaks = c(1, 30, 70, 100, 150, 180),
+             range = c(2, 8)) +
+  scale_fill_viridis_c("Proportion infected ", 
+                         limits = c(0, 0.12),
+                       breaks = c(0, 0.05, 0.10)) +
+# breaks = c(0, 0.05, 0.10)) +
+theme_void() +
+  theme(legend.title = element_text(size = 11, color = "black"), 
+        legend.text = element_text(size = 10, color = "black"), 
+        legend.frame = element_rect(color = "black"),
+        legend.ticks = element_blank(),
+        plot.background = element_rect(color = NA, fill = "white"), 
+        panel.background = element_rect(color = NA, fill = "white")) +
+  guides(fill = guide_colorbar(barwidth = 0.5, barheight = 4))
 
 setwd(here::here("figures"))  
-ggsave(filename = "map_of_baseline_ip.png", 
-       width = 5, 
-       height = 4.5, 
+ggsave(filename = "figure_05.png", 
+       width = 6, 
+       height = 4, 
        units = "in", 
-       dpi = 300)
+       dpi = 600)
