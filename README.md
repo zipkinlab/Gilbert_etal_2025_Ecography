@@ -61,7 +61,7 @@ ________________________________________________________________________________
     | shan_plot_mean | Posterior mean of Shannon diversity for NEON plot |
     | shan_plot_sd | Posterior standard deviation of Shannon diversity for NEON plot |
 
-* [neon_cr_data_2024-01-17.RData](./data/neon_cr_data_2024-01-17.RData) Formatted data ready to go into model; .RData object with four items
+* [neon_cr_data_2024-03-29.RData](./data/neon_cr_data_2024-03-29.RData) Formatted data ready to go into model; .RData object with four items
    * **constants** Constants for model
      
     | Variable name | Meaning |
