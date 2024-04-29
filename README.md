@@ -1,14 +1,11 @@
 # Idiosyncratic spatial scaling of biodiversity–disease relationships 
 
-### [Neil A. Gilbert](https://gilbertecology.com), [Graziella V. DiRenzo](https://grazielladirenzo.weebly.com/), [Elise F. Zipkin](https://zipkinlab.org/)
-
-### Data/code DOI: To be added upon acceptance
+### Authors: [Neil A. Gilbert](https://gilbertecology.com), [Graziella V. DiRenzo](https://grazielladirenzo.weebly.com/), [Elise F. Zipkin](https://zipkinlab.org/)
 
 #### Please contact the first author for questions about the code or data: Neil A. Gilbert (neil.allen.gilbert@gmail.com)
-
 __________________________________________________________________________________________________________________________________________
 
-## Abstract
+## Manuscript Abstract
 Host biodiversity is thought to dilute the risk of vector-borne diseases since many host species are “dead ends” which do not transmit the disease to other individuals. However, many studies on biodiversity–disease relationships characterize host biodiversity at individual, local spatial scales, which may complicate efforts to forecast disease risk if associations between host biodiversity and disease change with spatial scale. Here, our objective was to evaluate the spatial scaling of relationships between host biodiversity and Lyme disease risk, a zoonotic disease affecting >400,000 people in the United States annually. We compared the associations between host diversity of local communities (individual plots) versus metacommunities (multiple plots aggregated within a region) on infection prevalence in small mammals using datasets from the National Ecological Observatory Network, a continental-scale environmental monitoring program with a hierarchical sampling design. We applied a multispecies, spatially-stratified capture–recapture model to a trapping dataset to estimate small mammal biodiversity metrics, which we used to predict infection status for a subset of trapped individuals. We discovered idiosyncratic spatial scaling behaviors in the relationships between Lyme disease risk and the four biodiversity metrics we evaluated. For example, species richness of local communities show a negative (dilution) effect on infection prevalence, while species richness of the small mammal metacommunity showed a positive (amplification) effect on infection prevalence. In contrast, total abundance of the local community showed a negative (dilution) effect on infection prevalence, while total abundance of the metacommunity showed no association with infection prevalence. Our modeling approach promises to inform future analyses, as data from similar monitoring programs accumulates and becomes increasingly available. Our results indicate that a focus on single spatial scales when assessing the influence of biodiversity on disease risk may provide an incomplete picture of the complexity of disease risk in ecosystems.
 
 ## Repository Directory
