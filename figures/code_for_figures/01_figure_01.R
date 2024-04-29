@@ -92,15 +92,15 @@ bart_gg <- basemaps::basemap_ggplot(bart_ext)
 cowplot::ggdraw() +
   cowplot::draw_plot( bart_plot_map ) +
   cowplot::draw_plot( neon_site_map, 
-                      x = 0.68, 
-                      y = 0.55, 
-                      width = 0.3, 
-                      height = 0.3)
+                      x = 0.605, 
+                      y = 0.56, 
+                      width = 0.4, 
+                      height = 0.4)
 
 setwd(here::here("figures"))
 ggplot2::ggsave(
-  "example_neon_site_plot_v01.png", 
-  width = 6, 
-  height = 5, 
+  "figure_01.png", 
+  width = 5.95, 
+  height = 3.5, 
   units = "in", 
-  dpi = 300)
+  dpi = 600)
