@@ -1,8 +1,14 @@
 # Idiosyncratic spatial scaling of biodiversity–disease relationships 
+__________________________________________________________________________________________________________________________________________
 
 ### Authors: [Neil A. Gilbert](https://gilbertecology.com), [Graziella V. DiRenzo](https://grazielladirenzo.weebly.com/), [Elise F. Zipkin](https://zipkinlab.org/)
 
 #### Please contact the first author for questions about the code or data: Neil A. Gilbert (neil.allen.gilbert@gmail.com)
+__________________________________________________________________________________________________________________________________________
+
+### Repository description
+
+This repository contains data and code supporting the Gilbert et. al manuscript entitled, "Idiosyncratic spatial scaling of biodiversity–disease relationships". The objective of the paper is to evaluate how estimated relationships between Lyme disease risk and host biodiversity change when host biodiversity is quantified at different spatial scales. Data come from the National Ecological Observatory Network's small mammal monitoring program. The code (see Repository Directory below) includes scripts to format data, fit models, interpret results, and create figures. 
 __________________________________________________________________________________________________________________________________________
 
 ## Manuscript Abstract
