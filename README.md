@@ -144,11 +144,12 @@ ________________________________________________________________________________
    * [03_figure_03_04.R](./figures/code_for_figures/03_figure_03_04.R) Create Figures 3 (coefficient plot) and 4 (marginal effects)
    * [04_figure_05.R](./figures/code_for_figures/04_figure_05.R) Create Figure 5 (infection % map)
    * [05_table_s1.R](./figures/code_for_figures/05_table_s1.R) Create Table S1      
-* [biodiversity_map_v01.png](./figures/biodiversity_map_v01.png) Figure 2
-* [coefficient_plot_v01.png](./figures/coefficient_plot_v01.png) Figure 3
+* [figure_01.png](./figures/figure_01.png) Figure 1 (PNG)
 * [figure_01.pptx](./figures/figure_01.pptx) Figure 1 (PPT file for some post hoc editing)
-* [map_of_baseline_ip.png](./figures/map_of_baseline_ip.png) Figure 5
-* [species_richness_effect_v01.png](./figures/species_richness_effect_v01.png) Figure 4
+* [figure_02.png](./figures/figure_02.png) Figure 2
+* [figure_03.png](./figures/figure_03.png) Figure 3
+* [figure_04.png](./figures/figure_04.png) Figure 4
+* [figure_05.png](./figures/figure_05.png) Figure 5
 
 ### [results](./results): Contains results files
 * neon_capture_recapture_results_2024-04-11.RData. Output from MSSCR model (Step 1). File too large for GitHub: [download link](https://1drv.ms/u/s!AtvYBfNq7AMkhIIjVUn6z4ooDwt1Kw?e=iUlju0)
