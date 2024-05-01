@@ -1,4 +1,4 @@
-# Idiosyncratic spatial scaling of biodiversity–disease relationships 
+# Code for idiosyncratic spatial scaling of biodiversity–disease relationships 
 __________________________________________________________________________________________________________________________________________
 
 ### Authors: [Neil A. Gilbert](https://gilbertecology.com), [Graziella V. DiRenzo](https://grazielladirenzo.weebly.com/), [Elise F. Zipkin](https://zipkinlab.org/)
@@ -23,7 +23,7 @@ USGS Information Product Data System (IPDS) no.: TBD
 __________________________________________________________________________________________________________________________________________
 ### Suggested Citation for Software
 
-Gilbert, N.A. Code for Idiosyncratic spatial scaling of biodiversity–disease relationships. Version 1.0.0; U.S. Geological Survey software release. Reston, VA. DOI TBD
+Gilbert, N.A., G. V. DiRenzo, & E. F. Zipkin. Code for idiosyncratic spatial scaling of biodiversity–disease relationships. Version 1.0.0; U.S. Geological Survey software release. Reston, VA. DOI TBD
 __________________________________________________________________________________________________________________________________________
 
 ### Repository description
