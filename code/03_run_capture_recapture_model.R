@@ -1,6 +1,14 @@
+# Run multispecies, spatially-stratified capture-recapture model
+# NOTE: This is a computationally intensive script
+# It was run on a supercomputer using 3 cores and 20GB of memory per core, and took ~1.5 days to run
+# This script will not be feasible to run on a laptop or typical desktop
+
 library(tidyverse)
 library(nimble)
 library(parallel)
+library(here)
+
+setwd(here::here("data"))
 
 load("neon_cr_data_2024-03-29.RData")
 
