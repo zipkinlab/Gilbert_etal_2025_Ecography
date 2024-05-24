@@ -4,6 +4,9 @@ library(MCMCvis)
 library(reshape2)
 library(vegan)
 
+# NOTE: this results file is too large to push to GitHub
+# User can either run script 03_run_capture_recapture_model.R to produce a similar result file
+# OR the file can be downloaded from this OneDrive link: https://1drv.ms/u/s!AtvYBfNq7AMkhIIjVUn6z4ooDwt1Kw?e=iUlju0
 setwd(here::here("results"))
 load("neon_capture_recapture_results_2024-04-11.RData")
 
