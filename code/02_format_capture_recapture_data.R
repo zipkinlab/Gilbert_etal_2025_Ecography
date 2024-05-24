@@ -1,8 +1,10 @@
+# Code to prepare capture-recapture data
 library(here)
 library(tidyverse)
 library(lubridate)
 library(janitor)
 library(daymetr)
+library(sf)
 
 setwd(here::here("data"))
 
@@ -48,7 +50,7 @@ mam_surveys <- boxtrap$mam_pertrapnight |>
   dplyr::rename(box_collect_date = collectDate)
 
 # master list of site x plot x sampling dates assigned to site-level periods
-survey_key <- full_join( path_surveys, mam_surveys ) |>
+survey_key <- full_join( path_surveys, mam_surveys, relationship = "many-to-many" ) |>
   dplyr::filter(!siteID == "LENO") |> 
   dplyr::mutate( diff = abs(as.numeric(box_collect_date - path_collect_date))) |> 
   dplyr::filter( diff <= 10) |>
@@ -61,7 +63,7 @@ survey_key <- full_join( path_surveys, mam_surveys ) |>
                  period = base::cumsum(dlag > 7) + 1) |> 
   dplyr::select(-dlag) |> 
   dplyr::left_join(mam_surveys) |> 
-  dplyr::left_join( path_surveys ) |> 
+  dplyr::left_join( path_surveys , relationship = "many-to-many") |> 
   dplyr::mutate( diff = abs(as.numeric(box_collect_date - path_collect_date))) |> 
   dplyr::filter( diff <= 10 ) |> 
   dplyr::select( siteID, plotID, period, box_collect_date, path_collect_date ) |> 
@@ -71,7 +73,7 @@ survey_key <- full_join( path_surveys, mam_surveys ) |>
   dplyr::group_by(siteID) |>
   dplyr::mutate(plot = row_number()) |> 
   dplyr::full_join(
-    full_join( path_surveys, mam_surveys ) |>
+    full_join( path_surveys, mam_surveys, relationship = "many-to-many" ) |>
       dplyr::filter(!siteID == "LENO") |> 
       dplyr::mutate( diff = abs(as.numeric(box_collect_date - path_collect_date))) |> 
       dplyr::filter( diff <= 10) |>
@@ -84,7 +86,7 @@ survey_key <- full_join( path_surveys, mam_surveys ) |>
                      period = base::cumsum(dlag > 7) + 1) |> 
       dplyr::select(-dlag) |> 
       dplyr::left_join(mam_surveys) |> 
-      dplyr::left_join( path_surveys ) |> 
+      dplyr::left_join( path_surveys, relationship = "many-to-many" ) |> 
       dplyr::mutate( diff = abs(as.numeric(box_collect_date - path_collect_date))) |> 
       dplyr::filter( diff <= 10 ) |> 
       dplyr::select( siteID, plotID, period, box_collect_date, path_collect_date ))
@@ -279,7 +281,7 @@ figure_m <- captures |>
 z_ind <- survey_key |> 
   dplyr::select(siteID, period) |> 
   dplyr::distinct() |> 
-  dplyr::full_join(figure_m) |> 
+  dplyr::full_join(figure_m, relationship = "many-to-many") |> 
   dplyr::rowwise() |> 
   dplyr::mutate(ind = list(1:M)) |> 
   tidyr::unnest(cols = c(ind)) |> 
@@ -301,7 +303,7 @@ da_captures <-
   dplyr::ungroup() |> 
   dplyr::select(siteID, period, rep) |> 
   dplyr::distinct() |> 
-  dplyr::full_join(figure_m) |> 
+  dplyr::full_join(figure_m, relationship = "many-to-many") |> 
   dplyr::rowwise() |> 
   dplyr::mutate(ind = list(1:M)) |> 
   tidyr::unnest(cols = c(ind)) |> 
@@ -458,8 +460,8 @@ constants <- list(
 
 setwd(here::here("data"))
 
-save( data, 
-      constants, 
+save( data,
+      constants,
       final,
       get_z_index,
       file = paste0("neon_cr_data_", Sys.Date(), ".RData"))
