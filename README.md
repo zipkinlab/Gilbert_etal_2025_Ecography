@@ -136,7 +136,11 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
     | scientificName | Scientific name of individual |
     | ind | Identifier for individual (numeric) |
     | plotID | NEON plot (character) |
+    | tagID | Identifier for individual (NA for augmented individuals) |
     | y | Vector of detection-nondetection data (capture history) |
+    | positive | Indicates whether <i>Borrelia</i> infection was detected |
+    | type | Indicates sample type (ear, blood, or both) |
+    | path | Indicates which <i>Borrelia</i> taxon was detected (<i>Borrelia</i> spp. only or <i>Borrelia</i> spp. + <i>Borrelia burgdorferi</i>) |
     | year | Year of trapping |
     | month | Month of trapping |
     | day | Day of trapping |
