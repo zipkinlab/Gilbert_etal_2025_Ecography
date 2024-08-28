@@ -208,6 +208,20 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
 
 ### [results](./results): Contains results files
 * neon_capture_recapture_results_2024-04-11.RData. Output from MSSCR model (Step 1). File too large for GitHub: [download link](https://1drv.ms/u/s!AtvYBfNq7AMkhIIjVUn6z4ooDwt1Kw?e=iUlju0)
+* [faith_plot_phylo.rds](./results/faith_plot_phylo.rds) Results from alternative Step 2 model (phylogenetic diversity, local community) that includes phylogenetic dependence
+* [faith_plot_posterior.csv](./results/faith_plot_posterior.csv) CSV with posterior distribution of plot-level phylogenetic diversity
+* [faith_site_phylo.rds](./results/faith_site_phylo.rds) Results from alternative Step 2 model (phylogenetic diversity, metacommunity) that includes phylogenetic dependence
+* [faith_site_posterior.csv](./results/faith_site_posterior.csv) CSV with posterior distribution of site-level phylogenetic diversity
+* [n_plot_phylo.rds](./results/n_plot_phylo.rds) Results from alternative Step 2 model (total abundance, local community) that includes phylogenetic dependence
+* [n_plot_posterior.csv](./results/n_plot_posterior.csv) CSV with posterior distribution of plot-level total abundance
+* [n_site_phylo.rds](./results/n_site_phylo.rds) Results from alternative Step 2 model (total abundance, metacommunity) that includes phylogenetic dependence
+* [n_site_posterior.csv](./results/n_site_posterior.csv) CSV with posterior distribution of site-level total abundance
+* [pd_plot_phylo.rds](./results/pd_plot_phylo.rds)  Results from alternative Step 2 model (<i>Peromyscus</i> dominance, local community) that includes phylogenetic dependence
+* [pd_plot_posterior.csv](./results/pd_plot_posterior.csv) CSV with posterior distribution of plot-level <i>Peromyscus</i> dominance
+* [pd_site_phylo.rds](./results/pd_site_phylo.rds)  Results from alternative Step 2 model (<i>Peromyscus</i> dominance, metacommunity) that includes phylogenetic dependence
+* [pd_site_posterior.csv](./results/pd_site_posterior.csv) CSV with posterior distribution of site-level <i>Peromyscus</i> dominance
+* [rodent_pathogen_faith_plot_2024-08-21.RData](./results/rodent_pathogen_faith_plot_2024-08-21.RData) Results from Step 2 model (phylogenetic diversity, local community)
+* [rodent_pathogen_faith_site_2024-08-21.RData](./results/rodent_pathogen_faith_site_2024-08-21.RData) Results from Step 2 model (phylogenetic diversity, metacommunity)
 * [rodent_pathogen_n_plot_2024-04-18.RData](./results/rodent_pathogen_n_plot_2024-04-18.RData) Results from Step 2 model (total abundance, local community)
 * [rodent_pathogen_n_site_2024-04-18.RData](./results/rodent_pathogen_n_site_2024-04-18.RData) Results from Step 2 model (total abundance, metacommunity)
 * [rodent_pathogen_pd_plot_2024-04-19.RData](./results/rodent_pathogen_pd_plot_2024-04-19.RData) Results from Step 2 model (<i>Peromyscus</i> dominance, local community)
@@ -216,3 +230,11 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
 * [rodent_pathogen_shan_site_2024-04-18.RData](./results/rodent_pathogen_shan_site_2024-04-18.RData) Results from Step 2 model (Shannon diversity, metacommunity)
 * [rodent_pathogen_sr_plot_2024-04-18.RData](./results/rodent_pathogen_sr_plot_2024-04-18.RData) Results from Step 2 model (species richness, local community)
 * [rodent_pathogen_sr_site_2024-04-18.RData](./results/rodent_pathogen_sr_site_2024-04-18.RData) Resutls from Step 2 model (species richness, metacommunity)
+* [shan_plot_phylo.rds](./results/shan_plot_phylo.rds)  Results from alternative Step 2 model (Shannon diversity, local community) that includes phylogenetic dependence
+* [shan_plot_posterior.csv](./results/shan_plot_posterior.csv) CSV with posterior distribution of plot-level Shannon diversity
+* [shan_site_phylo.rds](./results/shan_site_phylo.rds)  Results from alternative Step 2 model (Shannon diversity, metacommunity) that includes phylogenetic dependence
+* [shan_site_posterior.csv](./results/shan_site_posterior.csv) CSV with posterior distribution of site-level Shannon diversity
+* [sr_plot_phylo.rds](./results/sr_plot_phylo.rds)  Results from alternative Step 2 model (species richness, local community) that includes phylogenetic dependence
+* [sr_plot_posterior.csv](./results/sr_plot_posterior.csv) CSV with posterior distribution of plot-level species richness
+* [sr_site_phylo.rds](./results/sr_site_phylo.rds)  Results from alternative Step 2 model (species richness, metacommunity) that includes phylogenetic dependence
+* [sr_site_posterior.csv](./results/sr_site_posterior.csv) CSV with posterior distribution of site-level species richness
