@@ -96,7 +96,7 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
     | faith_plot_mean | Posterior mean of phylogenetic diversity (abundance-weighted Faith index)  for NEON plot |
     | faith_plot_sd | Posterior standard deviation of phylogenetic diversity (abundance-weighted Faith index) for NEON plot |
 
-* [neon_cr_data_2024-03-29.RData](./data/neon_cr_data_2024-03-29.RData) Formatted data ready to go into model; .RData object with four items
+* [neon_cr_data_2024-08-27.RData](./data/neon_cr_data_2024-08-27.RData) Formatted data ready to go into model; .RData object with four items
    * **constants** Constants for model
      
     | Variable name | Meaning |
