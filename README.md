@@ -71,9 +71,10 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
     | plot | NEON plot (numeric) |
     | period | Trapping bout |
     | scientificName | Scientific name of individual screened for <i>Borrelia</i> infection |
-    | sp | Species numeric code for individual screened for Lyme infection |
+    | sp | Species numeric code for individual screened for <i>Borrelia</i> infection |
     | tagID | Unique identifier for individual small mammal |
-    | positive | Indicates whether or not individual tested positive for Lyme (1) or not (0) |
+    | positive | Indicates whether or not individual tested positive for <i>Borrelia</i> (1) or not (0) |
+    | type | Indicates sample type (ear tissue, blood, or both) |
     | sr_site_mean | Posterior mean of species richness for the entire NEON site |
     | sr_site_sd | Posterior standard deviation of species richness for the entire NEON site |
     | sr_plot_mean | Posterior mean of species richness for NEON plot |
@@ -90,6 +91,10 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
     | shan_site_sd | Posterior standard deviation of Shannon diversity for the entire NEON site |
     | shan_plot_mean | Posterior mean of Shannon diversity for NEON plot |
     | shan_plot_sd | Posterior standard deviation of Shannon diversity for NEON plot |
+    | faith_site_mean | Posterior mean of phylogenetic diversity (abundance-weighted Faith index) for the entire NEON site |
+    | faith_site_sd | Posterior standard deviation of phylogenetic diversity (abundance-weighted Faith index) for the entire NEON site |
+    | faith_plot_mean | Posterior mean of phylogenetic diversity (abundance-weighted Faith index)  for NEON plot |
+    | faith_plot_sd | Posterior standard deviation of phylogenetic diversity (abundance-weighted Faith index) for NEON plot |
 
 * [neon_cr_data_2024-03-29.RData](./data/neon_cr_data_2024-03-29.RData) Formatted data ready to go into model; .RData object with four items
    * **constants** Constants for model
