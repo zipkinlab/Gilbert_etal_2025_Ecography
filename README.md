@@ -195,6 +195,16 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
 * [figure_03.png](./figures/figure_03.png) Figure 3
 * [figure_04.png](./figures/figure_04.png) Figure 4
 * [figure_05.png](./figures/figure_05.png) Figure 5
+* [figure_s01.png](./figures/figure_s01.png) Figure S1
+* [figure_s01.pptx](./figures/figure_s01.pptx) Figure S1 (PPT file for post hoc editing)
+* [figure_s02.png](./figures/figure_s02.png) Figure S2
+* [figure_s03.png](./figures/figure_s03.png) Figure S3
+* [figure_s04.png](./figures/figure_s04.png) Figure S4
+* [figure_s05.png](./figures/figure_s05.png) Figure S5
+* [figure_s06.png](./figures/figure_s06.png) Figure S6
+* [figure_s07.png](./figures/figure_s07.png) Figure S7
+* [figure_s08.png](./figures/figure_s08.png) Figure S8
+* [video_s01.mp4](./figures/video_s01.mp4) Supplemental video of biodiversity metrics
 
 ### [results](./results): Contains results files
 * neon_capture_recapture_results_2024-04-11.RData. Output from MSSCR model (Step 1). File too large for GitHub: [download link](https://1drv.ms/u/s!AtvYBfNq7AMkhIIjVUn6z4ooDwt1Kw?e=iUlju0)
