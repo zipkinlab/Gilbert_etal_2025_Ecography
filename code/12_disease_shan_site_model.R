@@ -1,6 +1,7 @@
 # This script is mildly computationally intensive
-# It was run on a supercomputer with 3 cores and 10GB of memory per core, and took ~1 hour
+# It was run on a supercomputer with 3 cores and 3GB of memory per core, and took ~6 hours
 # It would probably be able to run on a desktop in a pinch
+library(here)
 library(tidyverse)
 library(parallel)
 library(nimble)
@@ -8,7 +9,7 @@ library(nimble)
 setwd(here::here("data"))
 final <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv") %>% 
   dplyr::group_by(scientificName) %>% 
-  dplyr::mutate(sp_disease = cur_group_id())
+  dplyr::mutate(sp_disease = cur_group_id()) 
 
 data <- list(
   y = final$positive, 
@@ -57,20 +58,14 @@ inits <- function(){
   )
 }
 
-params <- c("mu_gamma0", "sd_gamma0", "gamma1", "gamma0", "sd_epsilon", "epsilon",  "mean_shan", "sd_shan")
-
-# model <- nimbleModel(code = code,
-#                      # name = "code",
-#                      constants = constants,
-#                      data = data,
-#                      inits = inits())
+params <- c("mu_gamma0", "sd_gamma0", "gamma1", 
+            "gamma0", "sd_epsilon", "epsilon",  "mean_shan", "sd_shan")
 
 nc <- 3
-nb <- 10000
-ni <- nb + 5000
-nt <- 5
+nb <- 15000
+ni <- nb + 10000
+nt <- 10
 
-library(parallel)
 start <- Sys.time()
 cl <- makeCluster(nc)
 

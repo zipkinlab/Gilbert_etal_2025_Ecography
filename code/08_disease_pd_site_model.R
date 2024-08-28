@@ -1,6 +1,7 @@
 # This script is mildly computationally intensive
-# It was run on a supercomputer with 3 cores and 10GB of memory per core, and took ~1 hour
+# It was run on a supercomputer with 3 cores and 3GB of memory per core, and took ~6 hours
 # It would probably be able to run on a desktop in a pinch
+library(here)
 library(tidyverse)
 library(parallel)
 library(nimble)
@@ -38,7 +39,6 @@ code <- nimbleCode({
   }
   mean_pd <- mean( pd_site[1:nind] )
   sd_pd <- sd( pd_site[1:nind] )
-  
   for( i in 1:nind ) {
     pd_site[i] ~ dbeta( pd_site_alpha[i], pd_site_beta[i] )
     pd_site_scaled[i] <- ( pd_site[i] - mean_pd ) / sd_pd
@@ -61,17 +61,13 @@ inits <- function(){
   )
 }
 
-params <- c("mu_gamma0", "sd_gamma0", "gamma1", "gamma0", "sd_epsilon", "epsilon", "mean_pd", "sd_pd")
-
-# model <- nimbleModel(code = code,
-#                      constants = constants,
-#                      data = data,
-#                      inits = inits())
+params <- c("mu_gamma0", "sd_gamma0", "gamma1",
+            "gamma0", "sd_epsilon", "epsilon", "mean_pd", "sd_pd")
 
 nc <- 3
-nb <- 10000
-ni <- nb + 5000
-nt <- 5
+nb <- 15000
+ni <- nb + 10000
+nt <- 10
 
 library(parallel)
 start <- Sys.time()

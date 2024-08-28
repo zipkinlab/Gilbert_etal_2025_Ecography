@@ -210,21 +210,49 @@ site_in_range <- dplyr::bind_rows(res) |>
                  scientific_name = ifelse(scientific_name == "Neotamias minimus", "Tamias minimus", scientific_name)) |> 
   dplyr::rename(scientificName = scientific_name)
 
-lyme_status <- survey_key |> 
+temp <-
+  survey_key |> 
   dplyr::select(siteID, plotID, period, collectDate = path_collect_date ) |> 
   dplyr::distinct() |> 
   dplyr::left_join( rodent_pathogen[[5]] ) |> 
-  filter( grepl("Borrelia", testPathogenName)) |> 
-  dplyr::select(siteID, plotID, collectDate, sampleID, testPathogenName, testResult) |> 
+  filter( grepl("Borrelia", testPathogenName)) |>
+  filter(testPathogenName %in% c("Borrelia spp.", "Borrelia burgdorferi sensu lato")) |> 
+  dplyr::select(siteID, plotID, collectDate, period, sampleID, testPathogenName, testResult) |>
+  dplyr::group_by(sampleID) |> 
+  dplyr::filter(testResult == "Positive") |> 
+  dplyr::mutate(lato = ifelse(grepl("burg", testPathogenName), 1, 0), 
+                spp = ifelse(grepl("spp.", testPathogenName), 1, 0)) |> 
+  dplyr::summarise( path = ifelse(sum(lato) > 0 & sum(spp) == 0, "lato only", 
+                                  ifelse(sum(lato) == 0 & sum(spp) > 0, "spp only", "both"))) |> 
+  dplyr::mutate( sample_type = ifelse( grepl(".E$", sampleID), "earSampleID", 
+                                       ifelse(grepl(".B$", sampleID), "bloodSampleID", "whoops"))) |> 
+  group_by(sampleID) |>  
+  mutate(id = cur_group_id()) |> 
+  pivot_wider(names_from = sample_type, values_from = sampleID) |> 
+  dplyr::select(-id)
+
+lyme_status <- survey_key |>
+  dplyr::select(siteID, plotID, period, collectDate = path_collect_date ) |> 
+  dplyr::distinct() |> 
+  dplyr::left_join( rodent_pathogen[[5]] ) |> 
+  filter( grepl("Borrelia", testPathogenName)) |>
+  filter(testPathogenName %in% c("Borrelia spp.", "Borrelia burgdorferi sensu lato")) |> 
+  dplyr::select(siteID, plotID, collectDate, period, sampleID, testPathogenName, testResult) |>
   dplyr::mutate( sample_type = ifelse( grepl(".E$", sampleID), "earSampleID", 
                                        ifelse(grepl(".B$", sampleID), "bloodSampleID", "whoops"))) |>
-  dplyr::group_by(siteID, plotID, collectDate, sampleID, sample_type) |>
+  dplyr::group_by(siteID, plotID, collectDate, period, sampleID, sample_type) |>
   dplyr::summarise( positive = sum(testResult == "Positive")) |> 
   dplyr::mutate( positive = ifelse(positive > 0, 1, 0)) |> 
   dplyr::mutate( individual = stringr::str_remove(sampleID, ".B$")) |> 
   dplyr::mutate( individual = stringr::str_remove(individual, ".E$")) |> 
   tidyr::pivot_wider(names_from = sample_type, 
-                     values_from = sampleID)
+                     values_from = sampleID) |> 
+  dplyr::mutate(type = ifelse(!is.na(earSampleID) & is.na(bloodSampleID), "ear", 
+                              ifelse(is.na(earSampleID) & !is.na(bloodSampleID), "blood", 
+                                     ifelse(!is.na(earSampleID) & ! is.na(bloodSampleID), "both", "whoops")))) |>
+  dplyr::ungroup() |> 
+  dplyr::select(siteID, plotID, period, earSampleID, bloodSampleID, positive, type) |> 
+  dplyr::left_join(temp)
 
 captures <- survey_key |> 
   dplyr::select(siteID, plotID, period, collectDate = box_collect_date) |> 
@@ -242,7 +270,7 @@ captures <- survey_key |>
   dplyr::filter( ! base::grepl("sp.", scientificName ) ) |>
   dplyr::filter( ! base::grepl("/", scientificName ) ) |>
   dplyr::filter( order == "Rodentia" | order == "Soricomorpha" ) |>
-  dplyr::select(siteID, plotID, period, rep, nreps, scientificName, tagID, positive ) |> 
+  dplyr::select(siteID, plotID, period, rep, nreps, scientificName, tagID, positive, type, path ) |> 
   tibble::add_column( y = 1 ) |> 
   tidyr::pivot_wider( names_from = rep, values_from = c(y, positive) ) |> 
   dplyr::mutate( y_1 = base::ifelse( is.na( y_1 ) & ( ! is.na( y_2 ) | ! is.na( y_3 ) ), 0, y_1 ),
@@ -310,7 +338,7 @@ da_captures <-
   dplyr::select(siteID, period, rep, scientificName, ind) |> 
   dplyr::left_join(
     captures |> 
-      dplyr::select(siteID, plotID, period, rep, scientificName, ind, y)) |> 
+      dplyr::select(siteID, plotID, period, rep, scientificName, ind, tagID, y, positive, type, path)) |> 
   dplyr::mutate( y = tidyr::replace_na( y, 0 )) |> 
   dplyr::left_join(
     survey_key |> 

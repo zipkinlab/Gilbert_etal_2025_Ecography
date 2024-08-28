@@ -1,7 +1,7 @@
 # This script is mildly computationally intensive
-# It was run on a supercomputer with 3 cores and 10GB of memory per core, and took ~1 hour
+# It was run on a supercomputer with 3 cores and 3GB of memory per core, and took ~6 hours
 # It would probably be able to run on a desktop in a pinch
-
+library(here)
 library(tidyverse)
 library(parallel)
 library(nimble)
@@ -19,7 +19,7 @@ data <- list(
 constants <- list(
   nsp = length(unique(final$sp_disease)),
   nsite = length(unique(final$site)), 
-  nind = nrow(final), 
+  nind = nrow(final),
   site = final$site,
   sp = final$sp_disease)
 
@@ -28,7 +28,6 @@ code <- nimbleCode({
   sd_gamma0 ~ dexp(1)
   sd_epsilon ~ dexp(1)
   gamma1 ~ dnorm(0, sd = 1)
-  
   for(i in 1:nsp){
     gamma0[i] ~ dnorm( mu_gamma0, sd = sd_gamma0 )
   }
@@ -59,18 +58,13 @@ inits <- function(){
   )
 }
 
-params <- c("mu_gamma0", "sd_gamma0", "gamma1", "gamma0", "sd_epsilon", "epsilon", "mean_sr", "sd_sr")
-
-# model <- nimbleModel(code = code,
-#                      # name = "code",
-#                      constants = constants,
-#                      data = data,
-#                      inits = inits())
+params <- c("mu_gamma0", "sd_gamma0", "gamma1", "gamma0", 
+            "sd_epsilon", "epsilon", "mean_sr", "sd_sr")
 
 nc <- 3
-nb <- 10000
-ni <- nb + 5000
-nt <- 5
+nb <- 15000
+ni <- nb + 10000
+nt <- 10
 
 library(parallel)
 start <- Sys.time()

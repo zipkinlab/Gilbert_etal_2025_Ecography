@@ -13,13 +13,13 @@ final <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv") %>%
 
 data <- list(
   y = final$positive, 
-  n_plot_mean = final$n_plot_mean, 
-  n_plot_sd = final$n_plot_sd)
+  faith_plot_mean = final$faith_plot_mean, 
+  faith_plot_sd = final$faith_plot_sd)
 
 constants <- list(
   nsp = length(unique(final$sp_disease)),
   nsite = length(unique(final$site)), 
-  nind = nrow(final),
+  nind = nrow(final), 
   site = final$site,
   sp = final$sp_disease)
 
@@ -34,32 +34,32 @@ code <- nimbleCode({
   for( i in 1:nsite){
     epsilon[i] ~ dnorm( 0, sd = sd_epsilon )
   }
-  mean_n <- mean( n_plot[1:nind] )
-  sd_n <- sd( n_plot[1:nind] )
+  mean_faith <- mean( faith_plot[1:nind] )
+  sd_faith <- sd( faith_plot[1:nind] )
   for( i in 1:nind ) {
-    n_plot[i] ~ T( dnorm( n_plot_mean[i], sd = n_plot_sd[i] ), 0,  )
-    n_plot_scaled[i] <- ( n_plot[i] - mean_n ) / sd_n
+    faith_plot[i] ~ T( dnorm( faith_plot_mean[i], sd = faith_plot_sd[i] ), 0, )
+    faith_plot_scaled[i] <- ( faith_plot[i] - mean_faith ) / sd_faith
     y[i] ~ dbern( kappa[i] )
-    logit( kappa[i] ) <- gamma0[ sp[i] ] + gamma1 * n_plot_scaled[i] + epsilon[site[i]]
+    logit( kappa[i] ) <- gamma0[ sp[i] ] + gamma1 * faith_plot_scaled[i] + epsilon[site[i]]
   }
 })
 
 inits <- function(){
   list(
     mu_gamma0 = rnorm(1, 0, 0.1),
-    n_plot = data$n_plot_mean,
-    mean_n = mean( data$n_plot_mean), 
-    sd_n = mean( data$n_plot_sd),
+    faith_plot = data$faith_plot_mean,
+    mean_faith = mean( data$faith_plot_mean), 
+    sd_faith = mean( data$faith_plot_sd),
     sd_gamma0 = runif(1, 0, 1), 
     gamma1 = rnorm(1, 0, 0.25), 
-    gamma0 = rnorm(constants$nsite, 0, 1),
+    gamma0 = rnorm(constants$nsp, 0, 1),
     sd_epsilon = rexp(1),
     epsilon = rnorm(constants$nsite, 0, 1)
   )
 }
 
-params <- c("mu_gamma0", "sd_gamma0", "gamma1", "gamma0",
-            "sd_epsilon", "epsilon", "mean_n", "sd_n")
+params <- c("mu_gamma0", "sd_gamma0", "gamma1", "gamma0", "sd_epsilon",
+            "epsilon",  "mean_faith", "sd_faith")
 
 nc <- 3
 nb <- 15000
@@ -111,4 +111,4 @@ print(end - start)
 stopCluster(cl)
 
 save( code, data, constants, out, 
-      file = paste0("rodent_pathogen_n_plot_", Sys.Date(), ".RData"))
+      file = paste0("rodent_pathogen_faith_plot_", Sys.Date(), ".RData"))

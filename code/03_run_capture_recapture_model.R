@@ -9,8 +9,7 @@ library(parallel)
 library(here)
 
 setwd(here::here("data"))
-
-load("neon_cr_data_2024-03-29.RData")
+load("neon_cr_data_2024-08-27.RData")
 
 zst <- final %>%
   dplyr::group_by(siteID, site, plotID, plot, period, scientificName, sp, ind) %>% 
@@ -105,11 +104,6 @@ inits <- function(){
     alpha3 = alpha3_st, 
     alpha4 = alpha4_st,
     lambda = lambda_st,
-    # mu_gamma1 = mu_gamma1_st, 
-    # sd_gamma1 = sd_gamma1_st, 
-    # gamma1 = gamma1_st, 
-    # gamma2 = gamma2_st,
-    # theta = theta_st,
     N = N_st, 
     z = zst,
     plot = plotst
@@ -131,15 +125,7 @@ model.code <- nimbleCode({
   sd_alpha3 ~ dexp(1)
   mu_alpha4 ~ dnorm(0, sd = 0.5)
   sd_alpha4 ~ dexp(1)
-  # informative priors for ZI component parameters
-  # gamma2 ~ dgamma(7.5, 1.5)
-  # mu_gamma1 ~ dunif(-5, 0)
-  # start out with uninformative priors for ZI component parameters
-  # gamma2 ~ dnorm(0, sd = 5)
-  # mu_gamma1 ~ dnorm(0, sd = 5)
-  # sd_gamma1 ~ dexp(1)
   for(h in 1:nsp){
-    # gamma1[h] ~ dnorm( mu_gamma1, sd = sd_gamma1 )
     mu_beta1_sp[h] ~ dnorm( mu_beta1, sd = sd_beta1 )
     sd_beta1_sp[h] ~ dexp(1)
     beta2[h]  ~ dnorm( mu_beta2,  sd = sd_beta2  )
@@ -149,14 +135,11 @@ model.code <- nimbleCode({
     alpha3[h] ~ dnorm( mu_alpha3, sd = sd_alpha3 )
     alpha4[h] ~ dnorm( mu_alpha4, sd = sd_alpha4 )
     for(s in 1:nsite){ 
-      # theta[h,s] ~ dbern(phi[h,s])
-      # logit(phi[h,s]) <- gamma1[h] + gamma2*in_range[h,s]
       for(t in 1:max_period[s]){
         psi[h,s,t] <- sum( lambda[h, s, t, 1:max_plot[s,t]]) / M[h,s]
         for( j in 1:max_plot[s, t] ) { # j = NEON plotID within site
           beta1[h,s,t,j] ~ dnorm( mu_beta1_sp[h], sd = sd_beta1_sp[h] )
           lambda[h, s, t, j] <- exp( beta1[h,s,t,j] + beta2[h] * CANOPY[s,j] + beta3[h]*CANOPY[s,j]*CANOPY[s,j] ) * in_range[h,s] # CONSTRAIN BY WHETHER OR NOT NEON SITE IS IN SPECIES' RANGE
-          # lambda[h, s, t, j] <- exp( beta1[h,s,t,j] + beta2[h] * CANOPY[s,j] + beta3[h]*CANOPY[s,j]*CANOPY[s,j] ) 
           N[h, s, t, j] ~ dpois( lambda[h, s, t, j] )
           probs[h, s, t, j] <- lambda[h, s, t, j] / sum( lambda[h, s, t, 1:max_plot[s, t]] )
         }
@@ -185,8 +168,6 @@ params <- c(
   "mu_alpha4", "sd_alpha4",
   "alpha1", "alpha2", 
   "alpha3", "alpha4",
-  # "mu_gamma1", "sd_gamma1", 
-  # "gamma1", "gamma2",
   "N", "psi")
 
 nc <- 3
