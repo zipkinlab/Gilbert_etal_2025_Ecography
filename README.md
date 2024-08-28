@@ -70,7 +70,7 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
     | plotID | NEON plot (text) |
     | plot | NEON plot (numeric) |
     | period | Trapping bout |
-    | scientificName | Scientific name of individual screened for Lyme infection |
+    | scientificName | Scientific name of individual screened for <i>Borrelia</i> infection |
     | sp | Species numeric code for individual screened for Lyme infection |
     | tagID | Unique identifier for individual small mammal |
     | positive | Indicates whether or not individual tested positive for Lyme (1) or not (0) |
