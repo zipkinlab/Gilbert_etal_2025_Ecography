@@ -21,6 +21,10 @@ load("rodent_pathogen_n_plot_2024-04-18.RData")
 n_plot <- out
 load("rodent_pathogen_n_site_2024-04-18.RData")
 n_site <- out
+load("rodent_pathogen_faith_plot_2024-08-21.RData")
+faith_plot <- out
+load("rodent_pathogen_faith_site_2024-08-21.RData")
+faith_site <- out
 
 setwd(here::here("data"))
 d <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv")
@@ -66,10 +70,21 @@ MCMCvis::MCMCsummary( pd_site, params = c("gamma1"), probs = c(0.025, 0.16, 0.84
       tibble::as_tibble(rownames = "param") |> 
       dplyr::select(param, mean, l95 = `2.5%`, l68 = `16%`, u68 = `84%`, u95 = `97.5%`) |> 
       tibble::add_column(metric = "Shannon diversity", scale = "site"))  |> 
+  dplyr::full_join(
+    MCMCvis::MCMCsummary( faith_site, params = c("gamma1"), probs = c(0.025, 0.16, 0.84, 0.975)) |> 
+      tibble::as_tibble(rownames = "param") |> 
+      dplyr::select(param, mean, l95 = `2.5%`, l68 = `16%`, u68 = `84%`, u95 = `97.5%`) |> 
+      tibble::add_column(metric = "Phylogenetic diversity", scale = "site")) |> 
+  dplyr::full_join(
+    MCMCvis::MCMCsummary( faith_plot, params = c("gamma1"), probs = c(0.025, 0.16, 0.84, 0.975)) |> 
+      tibble::as_tibble(rownames = "param") |> 
+      dplyr::select(param, mean, l95 = `2.5%`, l68 = `16%`, u68 = `84%`, u95 = `97.5%`) |> 
+      tibble::add_column(metric = "Phylogenetic diversity", scale = "plot")) |> 
   dplyr::mutate( metric = ifelse(metric == "SR", "Species richness",
                                  ifelse(metric == "PD", "Peromyscus dominance", metric))) |> 
   dplyr::mutate(metric_styled = ifelse(grepl("Pero", metric), "<i>Peromyscus</i> dominance", metric)) |> 
   dplyr::mutate(metric_styled = factor(metric_styled, levels = c(
+    "Phylogenetic diversity",
     "Shannon diversity",
     "Total abundance", 
     "<i>Peromyscus</i> dominance", 
@@ -104,7 +119,7 @@ setwd(here::here("figures"))
 ggsave(
   "figure_03.png", 
   width = 4.85, 
-  height = 4, 
+  height = 4.25, 
   units = "in", 
   dpi = 600
 )  
@@ -171,6 +186,22 @@ MCMCpstr(sr_plot, params = c("gamma1"), type = "chains")[[1]] |>
       summarise( p_positive = sum(value >= 0) / sum(!is.na(value)), mean = mean(value), l95 = quantile(value, c(0.025)), u95 = quantile(value, c(0.975))) |> 
       add_column( metric = "Shannon", 
                   scale = "site") |> 
+      dplyr::select(metric, scale, mean, l95, u95, p_positive)
+  ) |> 
+  full_join(
+    MCMCpstr(faith_site, params = c("gamma1"), type = "chains")[[1]] |>
+      as_tibble() |> pivot_longer(1:3000, names_to = "iter", values_to = "value") |>
+      summarise( p_positive = sum(value >= 0) / sum(!is.na(value)), mean = mean(value), l95 = quantile(value, c(0.025)), u95 = quantile(value, c(0.975))) |> 
+      add_column( metric = "Faith", 
+                  scale = "site") |> 
+      dplyr::select(metric, scale, mean, l95, u95, p_positive)
+  ) |> 
+  full_join(
+    MCMCpstr(faith_plot, params = c("gamma1"), type = "chains")[[1]] |>
+      as_tibble() |> pivot_longer(1:3000, names_to = "iter", values_to = "value") |>
+      summarise( p_positive = sum(value >= 0) / sum(!is.na(value)), mean = mean(value), l95 = quantile(value, c(0.025)), u95 = quantile(value, c(0.975))) |> 
+      add_column( metric = "Faith", 
+                  scale = "plot") |> 
       dplyr::select(metric, scale, mean, l95, u95, p_positive)
   ) |> 
   mutate(p_positive = round(p_positive, 2),
@@ -455,6 +486,70 @@ shan_site_com <- shan_site_d |>
   dplyr::mutate(sr_plot = as.numeric(scale(sr))) |> 
   dplyr::select(x = sr_plot, x_unscaled = sr) |> 
   tibble::add_column(metric = "Shannon diversity", 
+                     scale = "Metacommunity")
+
+faith_plot_d <- d |>
+  dplyr::select(site, faith_plot_mean, faith_plot_sd) |>
+  dplyr::distinct() |>
+  dplyr::group_by(site) |>
+  dplyr::filter(faith_plot_mean == min(faith_plot_mean) | faith_plot_mean == max(faith_plot_mean)) |> 
+  dplyr::mutate( sr_l95 = faith_plot_mean - 2*faith_plot_sd,
+                 sr_u95 = faith_plot_mean + 2*faith_plot_sd) |>
+  dplyr::mutate(sr_l95 = ifelse(sr_l95 < 0, 0, sr_l95)) |>
+  dplyr::mutate( type = ifelse(faith_plot_mean == min(faith_plot_mean), "min", "max")) |>
+  dplyr::select(-faith_plot_mean, -faith_plot_sd) |>
+  tidyr::pivot_wider(names_from = type, values_from = sr_l95:sr_u95) |>
+  dplyr::mutate(sr_u95_max = ifelse(is.na(sr_u95_max), sr_u95_min, sr_u95_max)) |> 
+  dplyr::select(-sr_l95_max, -sr_u95_min) |>  
+  dplyr::mutate( faith_plot = list(seq(from = sr_l95_min, to = sr_u95_max, by = 0.1))) |>
+  tidyr::unnest(cols = faith_plot) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(faith_plot_sc = as.numeric(scale(faith_plot))) |>
+  dplyr::select(site, faith_plot = faith_plot_sc, faith_plot_unscaled = faith_plot)
+
+faith_plot_com <- faith_plot_d |>
+  dplyr::select(sr = faith_plot_unscaled) |> 
+  dplyr::filter( sr == min(sr) | sr == max(sr)) |> 
+  dplyr::distinct() |> 
+  tibble::add_column(type = c("min", "max")) |> 
+  tidyr::pivot_wider(names_from = type, values_from = sr) |> 
+  dplyr::mutate( sr = list(seq(from = min, to = max, by = 0.1))) |> 
+  tidyr::unnest(sr) |> 
+  dplyr::mutate(sr_plot = as.numeric(scale(sr))) |> 
+  dplyr::select(x = sr_plot, x_unscaled = sr) |> 
+  tibble::add_column(metric = "Phylogenetic diversity", 
+                     scale = "Local community")
+
+faith_site_d <- d |>
+  dplyr::select(site, faith_site_mean, faith_site_sd) |>
+  dplyr::distinct() |>
+  dplyr::group_by(site) |>
+  dplyr::filter(faith_site_mean == min(faith_site_mean) | faith_site_mean == max(faith_site_mean)) |> 
+  dplyr::mutate( sr_l95 = faith_site_mean - 2*faith_site_sd,
+                 sr_u95 = faith_site_mean + 2*faith_site_sd) |>
+  dplyr::mutate(sr_l95 = ifelse(sr_l95 < 0, 0, sr_l95)) |>
+  dplyr::mutate( type = ifelse(faith_site_mean == min(faith_site_mean), "min", "max")) |>
+  dplyr::select(-faith_site_mean, -faith_site_sd) |>
+  tidyr::pivot_wider(names_from = type, values_from = sr_l95:sr_u95) |>
+  dplyr::mutate(sr_u95_max = ifelse(is.na(sr_u95_max), sr_u95_min, sr_u95_max)) |> 
+  dplyr::select(-sr_l95_max, -sr_u95_min) |>  
+  dplyr::mutate( faith_site = list(seq(from = sr_l95_min, to = sr_u95_max, by = 0.1))) |>
+  tidyr::unnest(cols = faith_site) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(faith_site_sc = as.numeric(scale(faith_site))) |>
+  dplyr::select(site, faith_site = faith_site_sc, faith_site_unscaled = faith_site)
+
+faith_site_com <- faith_site_d |>
+  dplyr::select(sr = faith_site_unscaled) |> 
+  dplyr::filter( sr == min(sr) | sr == max(sr)) |> 
+  dplyr::distinct() |> 
+  tibble::add_column(type = c("min", "max")) |> 
+  tidyr::pivot_wider(names_from = type, values_from = sr) |> 
+  dplyr::mutate( sr = list(seq(from = min, to = max, by = 0.1))) |> 
+  tidyr::unnest(sr) |> 
+  dplyr::mutate(sr_plot = as.numeric(scale(sr))) |> 
+  dplyr::select(x = sr_plot, x_unscaled = sr) |> 
+  tibble::add_column(metric = "Phylogenetic diversity", 
                      scale = "Metacommunity")
 
 sr_com_marginal <- MCMCvis::MCMCpstr( sr_plot, params = c("mu_gamma0"), type = "chains")[[1]] |>
@@ -842,13 +937,112 @@ shan_marginal <-
   ) |> 
   tibble::add_column(metric = "Shannon diversity")
 
+faith_com_marginal <- MCMCvis::MCMCpstr( faith_plot, params = c("mu_gamma0"), type = "chains")[[1]] |>
+  tibble::as_tibble() |>
+  tidyr::pivot_longer(starts_with("V"), names_to = "iter", values_to = "mu_gamma0") |> 
+  dplyr::mutate(iter = parse_number(iter)) |> 
+  dplyr::full_join(
+    MCMCvis::MCMCpstr( faith_plot, params = c("gamma1"), type = "chains")[[1]] |> 
+      tibble::as_tibble() |> 
+      tidyr::pivot_longer(starts_with("V"), names_to = "iter", values_to = "gamma1") |> 
+      dplyr::mutate(iter = parse_number(iter))) |> 
+  dplyr::select(iter, mu_gamma0, gamma1) |>
+  dplyr::cross_join( faith_plot_com) |> 
+  dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * x)) |> 
+  dplyr::group_by(x, x_unscaled, metric, scale) |> 
+  dplyr::summarise(mean = mean(p), 
+                   l95 = quantile(p, c(0.025)), 
+                   u95 = quantile(p, c(0.975))) |> 
+  dplyr::full_join(
+    
+    MCMCvis::MCMCpstr( faith_site, params = c("mu_gamma0"), type = "chains")[[1]] |>
+      tibble::as_tibble() |>
+      tidyr::pivot_longer(starts_with("V"), names_to = "iter", values_to = "mu_gamma0") |> 
+      dplyr::mutate(iter = parse_number(iter)) |> 
+      dplyr::full_join(
+        MCMCvis::MCMCpstr( faith_site, params = c("gamma1"), type = "chains")[[1]] |> 
+          tibble::as_tibble() |> 
+          tidyr::pivot_longer(starts_with("V"), names_to = "iter", values_to = "gamma1") |> 
+          dplyr::mutate(iter = parse_number(iter))) |> 
+      dplyr::select(iter, mu_gamma0, gamma1) |>
+      dplyr::cross_join( faith_site_com) |> 
+      dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * x)) |> 
+      dplyr::group_by(x, x_unscaled, metric, scale) |> 
+      dplyr::summarise(mean = mean(p), 
+                       l95 = quantile(p, c(0.025)), 
+                       u95 = quantile(p, c(0.975))))
+
+faith_marginal <-
+  MCMCvis::MCMCpstr( faith_plot, params = c("mu_gamma0"), type = "chains")[[1]] |>
+  tibble::as_tibble() |>
+  tidyr::pivot_longer(starts_with("V"), names_to = "iter", values_to = "mu_gamma0") |> 
+  dplyr::mutate(iter = parse_number(iter)) |> 
+  dplyr::full_join(
+    MCMCvis::MCMCpstr( faith_plot, params = c("gamma1"), type = "chains")[[1]] |> 
+      tibble::as_tibble() |> 
+      tidyr::pivot_longer(starts_with("V"), names_to = "iter", values_to = "gamma1") |> 
+      dplyr::mutate(iter = parse_number(iter))) |> 
+  dplyr::full_join(
+    MCMCvis::MCMCpstr( faith_plot, params = c("epsilon"), type = "chains")[[1]] |> 
+      tibble::as_tibble(rownames = "site") |> 
+      tidyr::pivot_longer(starts_with("V"), names_to = "iter", values_to = "epsilon") |> 
+      dplyr::mutate(site = parse_number(site),
+                    iter = parse_number(iter))) |> 
+  dplyr::select(site, iter, mu_gamma0, gamma1, epsilon) |>
+  dplyr::full_join( faith_plot_d) |> 
+  dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * faith_plot + epsilon)) |> 
+  dplyr::group_by(site, faith_plot, faith_plot_unscaled) |> 
+  dplyr::summarise(mean = mean(p), 
+                   l95 = quantile(p, c(0.025)), 
+                   u95 = quantile(p, c(0.975))) |> 
+  dplyr::full_join(site_key) |> 
+  tibble::add_column(scale = "Local community") |> 
+  dplyr::rename(xcoord = x, 
+                ycoord = y,
+                x= faith_plot, x_unscaled = faith_plot_unscaled) |> 
+  
+  dplyr::full_join(
+    MCMCvis::MCMCpstr( faith_site, params = c("mu_gamma0"), type = "chains")[[1]] |>
+      tibble::as_tibble() |>
+      tidyr::pivot_longer(starts_with("V"), names_to = "iter", values_to = "mu_gamma0") |> 
+      dplyr::mutate(iter = parse_number(iter)) |> 
+      dplyr::full_join(
+        MCMCvis::MCMCpstr( faith_site, params = c("gamma1"), type = "chains")[[1]] |> 
+          tibble::as_tibble() |> 
+          tidyr::pivot_longer(starts_with("V"), names_to = "iter", values_to = "gamma1") |> 
+          dplyr::mutate(iter = parse_number(iter))) |> 
+      dplyr::full_join(
+        MCMCvis::MCMCpstr( faith_site, params = c("epsilon"), type = "chains")[[1]] |> 
+          tibble::as_tibble(rownames = "site") |> 
+          tidyr::pivot_longer(starts_with("V"), names_to = "iter", values_to = "epsilon") |> 
+          dplyr::mutate(site = parse_number(site),
+                        iter = parse_number(iter))) |> 
+      dplyr::select(site, iter, mu_gamma0, gamma1, epsilon) |>
+      dplyr::full_join( faith_site_d) |> 
+      dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * faith_site + epsilon)) |> 
+      dplyr::group_by(site, faith_site, faith_site_unscaled) |> 
+      dplyr::summarise(mean = mean(p), 
+                       l95 = quantile(p, c(0.025)), 
+                       u95 = quantile(p, c(0.975))) |> 
+      dplyr::full_join(site_key) |> 
+      tibble::add_column(scale = "Metacommunity") |> 
+      dplyr::rename(xcoord = x, 
+                    ycoord = y,
+                    x = faith_site, x_unscaled = faith_site_unscaled)
+  ) |> 
+  tibble::add_column(metric = "Phylogenetic diversity")
+
 site_marginal <- full_join(sr_marginal, pd_marginal) |> 
   full_join(n_marginal) |> 
   full_join(shan_marginal) |>
+  full_join(faith_marginal) |> 
+  dplyr::mutate(metric = ifelse(metric == "Log( Total abundance )", 
+                                "Total abundance", metric)) |> 
   dplyr::mutate(metric = factor(metric, levels = c("Species richness", 
                                                    "Peromyscus dominance", 
-                                                   "Log( Total abundance )",
-                                                   "Shannon diversity"))) |> 
+                                                   "Total abundance",
+                                                   "Shannon diversity",
+                                                   "Phylogenetic diversity"))) |> 
   dplyr::mutate(siteID = factor(siteID, levels = c("DSNY", "OSBS", "JERC", "DELA", "TALL", "OAES", "GRSM", "ORNL", 
                                                    "MLBS", "SERC", "SCBI", "UKFS", "BLAN", "KONZ", "KONA", "HARV", 
                                                    "BART", "TREE", "STEI", "UNDE", "NOGP", "WOOD"))) 
@@ -856,10 +1050,14 @@ site_marginal <- full_join(sr_marginal, pd_marginal) |>
 com_marginal <- dplyr::full_join(sr_com_marginal, pd_com_marginal) |>
   dplyr::full_join(n_com_marginal) |> 
   dplyr::full_join(shan_com_marginal) |> 
+  dplyr::full_join(faith_com_marginal) |> 
+  dplyr::mutate(metric = ifelse(metric == "Log( Total abundance )", 
+                                "Total abundance", metric)) |> 
   dplyr::mutate(metric = factor(metric, levels = c("Species richness", 
                                                    "Peromyscus dominance", 
-                                                   "Log( Total abundance )",
-                                                   "Shannon diversity")))
+                                                   "Total abundance",
+                                                   "Shannon diversity",
+                                                   "Phylogenetic diversity")))
 ggplot() +
   geom_ribbon( data = com_marginal, aes(x = x_unscaled, ymin = l95, ymax = u95), 
                alpha = 0.3) +
@@ -878,7 +1076,7 @@ ggplot() +
   theme_minimal() +
   theme(legend.position = "bottom",
         strip.text = element_text(color = "black",
-                                  size = 10),
+                                  size = 9.4),
         axis.title = element_text(color = "black", 
                                   size = 10),
         axis.text = element_text(color = "black", size = 9), 
@@ -894,7 +1092,7 @@ ggplot() +
 setwd(here::here("figures"))
 ggsave(
   "figure_04.png", 
-  width = 7.5, 
+  width = 8.5, 
   height = 5.5, 
   units = "in", 
   dpi = 600

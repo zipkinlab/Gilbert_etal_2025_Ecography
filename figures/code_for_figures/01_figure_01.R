@@ -41,8 +41,10 @@ usa <- sf::st_as_sf(maps::map("state", fill=TRUE, plot =FALSE)) |>
     ggplot2::geom_sf( data = filter(sites, siteID == "BART"), aes( geometry = geometry ),
                       color =  MetBrewer::MetPalettes$Hiroshige[[1]][1],
                       size = 3) +
-    ggplot2::theme_void() +
-    ggplot2::theme( plot.background = element_rect(fill = "white", color = "black")))
+    # ggplot2::theme_void() +
+    ggplot2::theme( plot.background = element_rect(fill = "white", color = "black"),
+                    panel.background = element_rect(fill = "white", color = NA),
+                    axis.text = element_text(size = 6, color = "black")))
 
 bart <- tibble::tibble( plotID = c("BART_012", "BART_001", "BART_015", "BART_007", "BART_062", 
                                    "BART_084"),
