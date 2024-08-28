@@ -49,6 +49,13 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
  * [10_disease_n_plot_model.R](./code/10_disease_n_plot_model.R) Infection prevalence predicted by total abundance at the local community level
  * [11_disease_shan_plot_model.R](./code/11_disease_shan_plot_model.R) Infection prevalence predicted by Shannon diversity at local community level
  * [12_disease_shan_site_model.R](./code/12_disease_shan_site_model.R) Infection prevalence predicted by Shannon diversity at metacommunity level
+ * [13_disease_faith_site_model.R](./code/13_disease_faith_site_model.R) Infection prevalence predicted by phylo diversity at metacommunity level
+ * [14_disease_faith_plot_model.R](./code/14_disease_faith_plot_model.R) Infection prevalence predicted by phylo diversity at local community level
+ * [15_phylogenetic_regressions.R](./code/15_phylogenetic_regressions.R) Fit versions of disease models that account for phylogenetic dependence
+ * [16_check_influence_of_method.R](./code/16_check_influence_of_method.R) Check if sample type (blood, ear, or both) influences results
+ * [17_calculate_distances_areas_sites.R](./code/17_calculate_distances_areas_sites.R) Calculate plot spacing within sites
+ * [18_check_influence_of_plot_spacing.R](./code/18_check_influence_of_plot_spacing.R) Run model that includes variable for plot spacing
+ * [19_biodiversity_metric_correlation.R](./code/19_biodiversity_metric_correlation.R) Investigate collinearity of biodiversity metrics
 
 ### [data](./data): Contains data for analyses 
  * [range_maps](./data/range_maps) Folder with IUCN range maps for the species included in the analysis
@@ -63,10 +70,11 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
     | plotID | NEON plot (text) |
     | plot | NEON plot (numeric) |
     | period | Trapping bout |
-    | scientificName | Scientific name of individual screened for Lyme infection |
-    | sp | Species numeric code for individual screened for Lyme infection |
+    | scientificName | Scientific name of individual screened for <i>Borrelia</i> infection |
+    | sp | Species numeric code for individual screened for <i>Borrelia</i> infection |
     | tagID | Unique identifier for individual small mammal |
-    | positive | Indicates whether or not individual tested positive for Lyme (1) or not (0) |
+    | positive | Indicates whether or not individual tested positive for <i>Borrelia</i> (1) or not (0) |
+    | type | Indicates sample type (ear tissue, blood, or both) |
     | sr_site_mean | Posterior mean of species richness for the entire NEON site |
     | sr_site_sd | Posterior standard deviation of species richness for the entire NEON site |
     | sr_plot_mean | Posterior mean of species richness for NEON plot |
@@ -83,6 +91,10 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
     | shan_site_sd | Posterior standard deviation of Shannon diversity for the entire NEON site |
     | shan_plot_mean | Posterior mean of Shannon diversity for NEON plot |
     | shan_plot_sd | Posterior standard deviation of Shannon diversity for NEON plot |
+    | faith_site_mean | Posterior mean of phylogenetic diversity (abundance-weighted Faith index) for the entire NEON site |
+    | faith_site_sd | Posterior standard deviation of phylogenetic diversity (abundance-weighted Faith index) for the entire NEON site |
+    | faith_plot_mean | Posterior mean of phylogenetic diversity (abundance-weighted Faith index)  for NEON plot |
+    | faith_plot_sd | Posterior standard deviation of phylogenetic diversity (abundance-weighted Faith index) for NEON plot |
 
 * [neon_cr_data_2024-03-29.RData](./data/neon_cr_data_2024-03-29.RData) Formatted data ready to go into model; .RData object with four items
    * **constants** Constants for model
@@ -124,7 +136,11 @@ Host biodiversity is thought to dilute the risk of vector-borne diseases since m
     | scientificName | Scientific name of individual |
     | ind | Identifier for individual (numeric) |
     | plotID | NEON plot (character) |
+    | tagID | Identifier for individual (NA for augmented individuals) |
     | y | Vector of detection-nondetection data (capture history) |
+    | positive | Indicates whether <i>Borrelia</i> infection was detected |
+    | type | Indicates sample type (ear, blood, or both) |
+    | path | Indicates which <i>Borrelia</i> taxon was detected (<i>Borrelia</i> spp. only or <i>Borrelia</i> spp. + <i>Borrelia burgdorferi</i>) |
     | year | Year of trapping |
     | month | Month of trapping |
     | day | Day of trapping |
