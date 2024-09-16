@@ -7,9 +7,14 @@ library(parallel)
 library(nimble)
 
 setwd(here::here("data"))
+nplots <- readr::read_csv("nplots.csv")
+
+
 final <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv") %>% 
   dplyr::group_by(scientificName) %>% 
-  dplyr::mutate(sp_disease = cur_group_id())
+  dplyr::mutate(sp_disease = cur_group_id()) %>%
+  dplyr::left_join(nplots) %>%
+  dplyr::filter(nplots > 1)
 
 data <- list(
   y = final$positive, 

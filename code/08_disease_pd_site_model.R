@@ -7,12 +7,16 @@ library(parallel)
 library(nimble)
 
 setwd(here::here("data"))
+nplots <- readr::read_csv("nplots.csv")
+
 final <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv") %>% 
   dplyr::group_by(scientificName) %>% 
   dplyr::mutate(sp_disease = cur_group_id()) %>%
   dplyr::ungroup() %>% 
   dplyr::mutate( alpha = ( pd_site_mean^2 * (1 - pd_site_mean) - pd_site_sd^2 * pd_site_mean ) / pd_site_sd^2) %>% 
-  dplyr::mutate( beta = (alpha * (1 - pd_site_mean)) / pd_site_mean )
+  dplyr::mutate( beta = (alpha * (1 - pd_site_mean)) / pd_site_mean ) %>%
+  dplyr::left_join(nplots) %>%
+  dplyr::filter(nplots > 1)
 
 data <- list(
   y = final$positive, 
