@@ -16,7 +16,10 @@ final <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv") %>%
   dplyr::mutate( alpha = ( pd_site_mean^2 * (1 - pd_site_mean) - pd_site_sd^2 * pd_site_mean ) / pd_site_sd^2) %>% 
   dplyr::mutate( beta = (alpha * (1 - pd_site_mean)) / pd_site_mean ) %>%
   dplyr::left_join(nplots) %>%
-  dplyr::filter(nplots > 1)
+  dplyr::filter(nplots > 1)  %>%
+  dplyr::group_by(siteID) %>%
+  dplyr::mutate(site = dplyr::cur_group_id()) %>%
+  dplyr::ungroup()
 
 data <- list(
   y = final$positive, 

@@ -13,7 +13,10 @@ final <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv") %>%
   dplyr::group_by(scientificName) %>% 
   dplyr::mutate(sp_disease = cur_group_id()) %>%
   dplyr::left_join(nplots) %>%
-  dplyr::filter(nplots > 1)
+  dplyr::filter(nplots > 1)  %>%
+  dplyr::group_by(siteID) %>%
+  dplyr::mutate(site = dplyr::cur_group_id()) %>%
+  dplyr::ungroup()
 
 data <- list(
   y = final$positive, 
