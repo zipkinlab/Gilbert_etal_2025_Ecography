@@ -55,7 +55,8 @@ Host biodiversity is hypothesized to dilute the risk of vector-borne diseases be
  * [16_check_influence_of_method.R](./code/16_check_influence_of_method.R) Check if sample type (blood, ear, or both) influences results
  * [17_calculate_distances_areas_sites.R](./code/17_calculate_distances_areas_sites.R) Calculate plot spacing within sites
  * [18_check_influence_of_plot_spacing.R](./code/18_check_influence_of_plot_spacing.R) Run model that includes variable for plot spacing
- * [19_biodiversity_metric_correlation.R](./code/19_biodiversity_metric_correlation.R) Investigate collinearity of biodiversity metrics
+ * [19_check_influence_nplot.R](./code/19_check_influence_nplot.R) Run model that includes variable for number of plots sampled
+ * [20_biodiversity_metric_correlation.R](./code/20_biodiversity_metric_correlation.R) Investigate collinearity of biodiversity metrics
 
 ### [data](./data): Contains data for analyses 
  * [range_maps](./data/range_maps) Folder with IUCN range maps for the species included in the analysis
@@ -205,6 +206,8 @@ Host biodiversity is hypothesized to dilute the risk of vector-borne diseases be
 * [figure_s06.png](./figures/figure_s06.png) Figure S6
 * [figure_s07.png](./figures/figure_s07.png) Figure S7
 * [figure_s08.png](./figures/figure_s08.png) Figure S8
+* [figure_s09.png](./figures/figure_s09.png) Figure S9
+* [figure_s10.png](./figures/figure_s10.png) Figure S10
 * [video_s01.mp4](./figures/video_s01.mp4) Supplemental video of biodiversity metrics
 
 ### [results](./results): Contains results files
