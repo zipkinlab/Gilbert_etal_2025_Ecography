@@ -175,6 +175,7 @@ Host biodiversity is hypothesized to dilute the risk of vector-borne diseases be
   * [neon_mammal_box_trapping_v01.RData](./data/neon_mammal_box_trapping_v01.RData) Small mammal box trapping data; see [NEON documentation](https://data.neonscience.org/data-products/DP1.10072.001) for detail
   * [neon_mammal_sequences_v01.RData](./data/neon_mammal_sequences_v01.RData) Small mammal DNA sequence data; see [NEON documention](https://data.neonscience.org/data-products/DP1.10076.001) for detail
   * [neon_mammal_tick_pathogen_v01.RData](./data/neon_mammal_tick_pathogen_v01.RData) Small mammal tick pathogen screening data; see [NEON documentation](https://data.neonscience.org/data-products/DP1.10064.002) for detail
+  * [nplots.csv](./data/nplots.csv) CSV file with number of plots sampled at each site for each period
   * [output.nex](./data/output.nex) Phylogeny for focal species; downloaded from [VertLife](https://vertlife.org/data/mammals/)
   * [site_distance_area.csv](./data/site_distance_area.csv) Information on distances between plots within sites
 
