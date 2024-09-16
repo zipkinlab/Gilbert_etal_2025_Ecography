@@ -4,22 +4,50 @@ library(patchwork)
 library(sf)
 
 setwd(here::here("data"))
-d <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv")
-
-df <- d |> 
-  dplyr::select(siteID, plotID, period, sr_site_mean:faith_plot_sd) |> 
+d <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv") |> 
+  dplyr::select(siteID, site) |> 
   dplyr::distinct()
 
-# for the plot, show the first trapping bout for 2021
-period_to_select <- tibble(
-  siteID = c("BART", "BLAN", "DELA", "DSNY", "GRSM", "HARV", "JERC", "KONA", 
-             "KONZ", "MLBS", "NOGP", "OAES", "ORNL", "OSBS", "SCBI", "SERC", 
-             "STEI", "TALL", "TREE", "UKFS", "UNDE", "WOOD"),
-  period = c(1, 1, 1, 1, 1, 4, 1, 1, 4, 1, 1, 1, 2, 1, 4, 1, 1, 1, 4, 1, 
-             1, 1),
-  date = structure(c(18821, 18786, 18815, 18913, 18793, 18758, 18842, 
-                     18794, 18814, 18765, 18793, 18821, 18751, 18758, 18751, 18758, 
-                     18782, 18758, 18793, 18821, 18815, 18730), class = "Date"))
+setwd(here::here("results"))
+
+df <- read_csv("sr_site_posterior.csv") |> 
+  dplyr::group_by(site, period) |> 
+  dplyr::summarise(mean = mean(sr), 
+                   sd = sd(sr)) |> 
+  dplyr::filter(mean > 0) |> 
+  tibble::add_column(metric = "Species richness") |> 
+  dplyr::full_join(
+    read_csv("pd_site_posterior.csv") |> 
+      dplyr::group_by(site, period) |> 
+      dplyr::summarise(mean = mean(pd), 
+                       sd = sd(pd)) |> 
+      dplyr::filter(mean > 0) |> 
+      tibble::add_column(metric = "Peromyscus dominance")
+    ) |> 
+  dplyr::full_join(
+    read_csv("n_site_posterior.csv") |> 
+      dplyr::group_by(site, period) |> 
+      dplyr::summarise(mean = mean(log1p(totN)), 
+                       sd = sd(log1p(totN))) |> 
+      dplyr::filter(mean > 0) |> 
+      tibble::add_column(metric = "Total abundance")
+  ) |> 
+  dplyr::full_join(
+    read_csv("shan_site_posterior.csv") |> 
+      dplyr::group_by(site, period) |> 
+      dplyr::summarise(mean = mean(shannon), 
+                       sd = sd(shannon)) |> 
+      dplyr::filter(mean > 0) |> 
+      tibble::add_column(metric = "Shannon diversity")
+  ) |> 
+  dplyr::full_join(
+    read_csv("faith_site_posterior.csv") |> 
+      dplyr::group_by(site, period) |> 
+      dplyr::summarise(mean = mean(n_pd), 
+                       sd = sd(n_pd)) |> 
+      dplyr::filter(mean > 0) |> 
+      tibble::add_column(metric = "Phylogenetic diversity")
+  )
 
 usa <- sf::st_as_sf(maps::map("state", fill=TRUE, plot =FALSE)) |> 
   dplyr::filter(! ID %in% c("washington", "oregon", "california", "nevada", "idaho", "utah", "arizona", "new mexico", 
@@ -44,20 +72,14 @@ sites <- tibble::tibble(
              46.236238875, 47.1379026363636)) 
 
 for_plot <- df |> 
-  dplyr::right_join(period_to_select) |> 
-  dplyr::select(siteID, period, matches("site")) |> 
-  dplyr::distinct() |>
-  pivot_longer(sr_site_mean:faith_site_sd, names_to = "metric") |> 
-  tidyr::separate(metric, into = c("metric", "junk", "stat"), sep = "_") |> 
-  tidyr::pivot_wider(names_from = stat, values_from = value) |> 
-  dplyr::select(-junk) |> 
+  dplyr::left_join(d) |> 
   dplyr::left_join(sites)|>
   sf::st_as_sf(coords = c("xcoord", "ycoord"), 
                crs = 4326) 
 
 ( sr <- ggplot2::ggplot() + 
     ggplot2::geom_sf(data = usa, aes(geometry = geom)) +
-    ggplot2::geom_sf(data = filter(for_plot, metric == "sr"),
+    ggplot2::geom_sf(data = filter(for_plot, metric == "Species richness" & period == 1),
                      aes(geometry = geometry, fill = mean),
                      pch = 21, 
                      color = "black", 
@@ -77,7 +99,7 @@ for_plot <- df |>
 
 ( sr_sd <- ggplot2::ggplot() + 
     ggplot2::geom_sf(data = usa, aes(geometry = geom)) +
-    ggplot2::geom_sf(data = filter(for_plot, metric == "sr"),
+    ggplot2::geom_sf(data = filter(for_plot, metric == "Species richness" & period == 1),
                      aes(geometry = geometry, fill = sd),
                      pch = 21, 
                      color = "black", 
@@ -96,11 +118,9 @@ for_plot <- df |>
     guides(fill = guide_colorbar(barwidth = 0.5, barheight = 3)))
   
 
-
-
 ( pd <- ggplot2::ggplot() + 
     ggplot2::geom_sf(data = usa, aes(geometry = geom)) +
-    ggplot2::geom_sf(data = filter(for_plot, metric == "pd"),
+    ggplot2::geom_sf(data = filter(for_plot, metric == "Peromyscus dominance" & period == 1),
                      aes(geometry = geometry, fill = mean),
                      pch = 21, 
                      color = "black", 
@@ -120,7 +140,7 @@ for_plot <- df |>
 
 ( pd_sd <- ggplot2::ggplot() + 
     ggplot2::geom_sf(data = usa, aes(geometry = geom)) +
-    ggplot2::geom_sf(data = filter(for_plot, metric == "pd"),
+    ggplot2::geom_sf(data = filter(for_plot, metric == "Peromyscus dominance" & period == 1),
                      aes(geometry = geometry, fill = sd),
                      pch = 21, 
                      color = "black", 
@@ -141,7 +161,7 @@ for_plot <- df |>
 
 ( n <- ggplot2::ggplot() + 
     ggplot2::geom_sf(data = usa, aes(geometry = geom)) +
-    ggplot2::geom_sf(data = filter(for_plot, metric == "n"),
+    ggplot2::geom_sf(data = filter(for_plot, metric == "Total abundance" & period == 1),
                      aes(geometry = geometry, fill = mean),
                      pch = 21, 
                      color = "black",
@@ -161,7 +181,7 @@ for_plot <- df |>
 
 ( n_sd <- ggplot2::ggplot() + 
     ggplot2::geom_sf(data = usa, aes(geometry = geom)) +
-    ggplot2::geom_sf(data = filter(for_plot, metric == "n"),
+    ggplot2::geom_sf(data = filter(for_plot, metric == "Total abundance" & period == 1),
                      aes(geometry = geometry, fill = sd),
                      pch = 21, 
                      color = "black",
@@ -182,7 +202,7 @@ for_plot <- df |>
 
 ( shan <- ggplot2::ggplot() + 
     ggplot2::geom_sf(data = usa, aes(geometry = geom)) +
-    ggplot2::geom_sf(data = filter(for_plot, metric == "shan"),
+    ggplot2::geom_sf(data = filter(for_plot, metric == "Shannon diversity" & period == 1),
                      aes(geometry = geometry, fill = mean),
                      pch = 21, 
                      color = "black",
@@ -203,7 +223,7 @@ for_plot <- df |>
 
 ( shan_sd <- ggplot2::ggplot() + 
     ggplot2::geom_sf(data = usa, aes(geometry = geom)) +
-    ggplot2::geom_sf(data = filter(for_plot, metric == "shan"),
+    ggplot2::geom_sf(data = filter(for_plot, metric == "Shannon diversity" & period == 1),
                      aes(geometry = geometry, fill = sd),
                      size = 2.5,
                      pch = 21, 
@@ -223,7 +243,7 @@ for_plot <- df |>
 
 ( faith <- ggplot2::ggplot() + 
     ggplot2::geom_sf(data = usa, aes(geometry = geom)) +
-    ggplot2::geom_sf(data = filter(for_plot, metric == "faith"),
+    ggplot2::geom_sf(data = filter(for_plot, metric == "Phylogenetic diversity" & period == 1),
                      aes(geometry = geometry, fill = mean),
                      pch = 21, 
                      color = "black",
@@ -243,7 +263,7 @@ for_plot <- df |>
 
 ( faith_sd <- ggplot2::ggplot() + 
     ggplot2::geom_sf(data = usa, aes(geometry = geom)) +
-    ggplot2::geom_sf(data = filter(for_plot, metric == "faith"),
+    ggplot2::geom_sf(data = filter(for_plot, metric == "Phylogenetic diversity" & period == 1),
                      aes(geometry = geometry, fill = sd),
                      size = 2.5,
                      pch = 21, 
