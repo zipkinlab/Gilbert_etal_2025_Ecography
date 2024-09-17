@@ -225,15 +225,15 @@ Host biodiversity is hypothesized to dilute the risk of vector-borne diseases be
 * [pd_site_phylo.rds](./results/pd_site_phylo.rds)  Results from alternative Step 2 model (<i>Peromyscus</i> dominance, metacommunity) that includes phylogenetic dependence
 * [pd_site_posterior.csv](./results/pd_site_posterior.csv) CSV with posterior distribution of site-level <i>Peromyscus</i> dominance
 * [rodent_pathogen_faith_plot_2024-08-21.RData](./results/rodent_pathogen_faith_plot_2024-08-21.RData) Results from Step 2 model (phylogenetic diversity, local community)
-* [rodent_pathogen_faith_site_2024-08-21.RData](./results/rodent_pathogen_faith_site_2024-08-21.RData) Results from Step 2 model (phylogenetic diversity, metacommunity)
+* [rodent_pathogen_faith_site_2024-09-16.RData](./results/rodent_pathogen_faith_site_2024-09-16.RData) Results from Step 2 model (phylogenetic diversity, metacommunity)
 * [rodent_pathogen_n_plot_2024-04-18.RData](./results/rodent_pathogen_n_plot_2024-04-18.RData) Results from Step 2 model (total abundance, local community)
-* [rodent_pathogen_n_site_2024-04-18.RData](./results/rodent_pathogen_n_site_2024-04-18.RData) Results from Step 2 model (total abundance, metacommunity)
+* [rodent_pathogen_n_site_2024-09-16.RData](./results/rodent_pathogen_n_site_2024-09-16.RData) Results from Step 2 model (total abundance, metacommunity)
 * [rodent_pathogen_pd_plot_2024-04-19.RData](./results/rodent_pathogen_pd_plot_2024-04-19.RData) Results from Step 2 model (<i>Peromyscus</i> dominance, local community)
-* [rodent_pathogen_pd_site_2024-04-19.RData](./results/rodent_pathogen_pd_site_2024-04-19.RData) Results from Step 2 model (<i>Peromyscus</i> dominance, metacommunity)
+* [rodent_pathogen_pd_site_2024-09-16.RData](./results/rodent_pathogen_pd_site_2024-09-16.RData) Results from Step 2 model (<i>Peromyscus</i> dominance, metacommunity)
 * [rodent_pathogen_shan_plot_2024-04-18.RData](./results/rodent_pathogen_shan_plot_2024-04-18.RData) Results from Step 2 model (Shannon diversity, local community)
-* [rodent_pathogen_shan_site_2024-04-18.RData](./results/rodent_pathogen_shan_site_2024-04-18.RData) Results from Step 2 model (Shannon diversity, metacommunity)
+* [rodent_pathogen_shan_site_2024-09-16.RData](./results/rodent_pathogen_shan_site_2024-09-16.RData) Results from Step 2 model (Shannon diversity, metacommunity)
 * [rodent_pathogen_sr_plot_2024-04-18.RData](./results/rodent_pathogen_sr_plot_2024-04-18.RData) Results from Step 2 model (species richness, local community)
-* [rodent_pathogen_sr_site_2024-04-18.RData](./results/rodent_pathogen_sr_site_2024-04-18.RData) Resutls from Step 2 model (species richness, metacommunity)
+* [rodent_pathogen_sr_site_2024-09-16.RData](./results/rodent_pathogen_sr_site_2024-09-16.RData) Resutls from Step 2 model (species richness, metacommunity)
 * [shan_plot_phylo.rds](./results/shan_plot_phylo.rds)  Results from alternative Step 2 model (Shannon diversity, local community) that includes phylogenetic dependence
 * [shan_plot_posterior.csv](./results/shan_plot_posterior.csv) CSV with posterior distribution of plot-level Shannon diversity
 * [shan_site_phylo.rds](./results/shan_site_phylo.rds)  Results from alternative Step 2 model (Shannon diversity, metacommunity) that includes phylogenetic dependence
