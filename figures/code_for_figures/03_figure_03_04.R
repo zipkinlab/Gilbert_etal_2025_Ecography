@@ -7,28 +7,28 @@ setwd(here::here("results"))
 
 load("rodent_pathogen_sr_plot_2024-04-18.RData")
 sr_plot <- out
-load("rodent_pathogen_sr_site_2024-04-18.RData")
+load("rodent_pathogen_sr_site_2024-09-16.RData")
 sr_site <- out
 load("rodent_pathogen_pd_plot_2024-04-19.RData")
 pd_plot <- out
-load("rodent_pathogen_pd_site_2024-04-19.RData")
+load("rodent_pathogen_pd_site_2024-09-16.RData")
 pd_site <- out
 load("rodent_pathogen_shan_plot_2024-04-18.RData")
 shan_plot <- out
-load("rodent_pathogen_shan_site_2024-04-18.RData")
+load("rodent_pathogen_shan_site_2024-09-16.RData")
 shan_site <- out
 load("rodent_pathogen_n_plot_2024-04-18.RData")
 n_plot <- out
-load("rodent_pathogen_n_site_2024-04-18.RData")
+load("rodent_pathogen_n_site_2024-09-16.RData")
 n_site <- out
 load("rodent_pathogen_faith_plot_2024-08-21.RData")
 faith_plot <- out
-load("rodent_pathogen_faith_site_2024-08-21.RData")
+load("rodent_pathogen_faith_site_2024-09-16.RData")
 faith_site <- out
 
 setwd(here::here("data"))
 d <- readr::read_csv("disease_with_biodiversity_metrics_v01.csv")
-load("neon_cr_data_2024-03-29.RData")
+load("neon_cr_data_2024-08-27.RData")
 load("neon_mammal_box_trapping_v01.RData")
 
 MCMCvis::MCMCsummary( pd_site, params = c("gamma1"), probs = c(0.025, 0.16, 0.84, 0.975)) |> 
@@ -123,6 +123,7 @@ ggsave(
   units = "in", 
   dpi = 600
 )  
+
 
 MCMCpstr(sr_plot, params = c("gamma1"), type = "chains")[[1]] |>
   as_tibble() |> pivot_longer(1:3000, names_to = "iter", values_to = "value") |>
@@ -566,8 +567,8 @@ sr_com_marginal <- MCMCvis::MCMCpstr( sr_plot, params = c("mu_gamma0"), type = "
   dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * x)) |> 
   dplyr::group_by(x, x_unscaled, metric, scale) |> 
   dplyr::summarise(mean = mean(p), 
-                   l95 = quantile(p, c(0.025)), 
-                   u95 = quantile(p, c(0.975))) |> 
+                   l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                   u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
   dplyr::full_join(
     
     MCMCvis::MCMCpstr( sr_site, params = c("mu_gamma0"), type = "chains")[[1]] |>
@@ -584,8 +585,8 @@ sr_com_marginal <- MCMCvis::MCMCpstr( sr_plot, params = c("mu_gamma0"), type = "
       dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * x)) |> 
       dplyr::group_by(x, x_unscaled, metric, scale) |> 
       dplyr::summarise(mean = mean(p), 
-                       l95 = quantile(p, c(0.025)), 
-                       u95 = quantile(p, c(0.975))))
+                       l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                       u95 = quantile(p, c(0.975), na.rm = TRUE)))
 
 sr_marginal <-
 MCMCvis::MCMCpstr( sr_plot, params = c("mu_gamma0"), type = "chains")[[1]] |>
@@ -608,8 +609,8 @@ MCMCvis::MCMCpstr( sr_plot, params = c("mu_gamma0"), type = "chains")[[1]] |>
   dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * sr_plot + epsilon)) |> 
   dplyr::group_by(site, sr_plot, sr_plot_unscaled) |> 
   dplyr::summarise(mean = mean(p), 
-                   l95 = quantile(p, c(0.025)), 
-                   u95 = quantile(p, c(0.975))) |> 
+                   l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                   u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
   dplyr::full_join(site_key) |> 
   tibble::add_column(scale = "Local community") |> 
   dplyr::rename(xcoord = x, 
@@ -639,8 +640,8 @@ MCMCvis::MCMCpstr( sr_plot, params = c("mu_gamma0"), type = "chains")[[1]] |>
       dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * sr_site + epsilon)) |> 
       dplyr::group_by(site, sr_site, sr_site_unscaled) |> 
       dplyr::summarise(mean = mean(p), 
-                       l95 = quantile(p, c(0.025)), 
-                       u95 = quantile(p, c(0.975))) |> 
+                       l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                       u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
       dplyr::full_join(site_key) |> 
       
       tibble::add_column(scale = "Metacommunity") |> 
@@ -664,8 +665,8 @@ pd_com_marginal <- MCMCvis::MCMCpstr( pd_plot, params = c("mu_gamma0"), type = "
   dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * x)) |> 
   dplyr::group_by(x, x_unscaled, metric, scale) |> 
   dplyr::summarise(mean = mean(p), 
-                   l95 = quantile(p, c(0.025)), 
-                   u95 = quantile(p, c(0.975))) |> 
+                   l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                   u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
   dplyr::full_join(
     
     MCMCvis::MCMCpstr( pd_site, params = c("mu_gamma0"), type = "chains")[[1]] |>
@@ -682,8 +683,8 @@ pd_com_marginal <- MCMCvis::MCMCpstr( pd_plot, params = c("mu_gamma0"), type = "
       dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * x)) |> 
       dplyr::group_by(x, x_unscaled, metric, scale) |> 
       dplyr::summarise(mean = mean(p), 
-                       l95 = quantile(p, c(0.025)), 
-                       u95 = quantile(p, c(0.975))))
+                       l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                       u95 = quantile(p, c(0.975), na.rm = TRUE)))
 
 pd_marginal <-
   MCMCvis::MCMCpstr( pd_plot, params = c("mu_gamma0"), type = "chains")[[1]] |>
@@ -706,8 +707,8 @@ pd_marginal <-
   dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * pd_plot + epsilon)) |> 
   dplyr::group_by(site, pd_plot, pd_plot_unscaled) |> 
   dplyr::summarise(mean = mean(p), 
-                   l95 = quantile(p, c(0.025)), 
-                   u95 = quantile(p, c(0.975))) |> 
+                   l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                   u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
   dplyr::full_join(site_key) |> 
   tibble::add_column(scale = "Local community") |> 
   dplyr::rename(
@@ -736,8 +737,8 @@ pd_marginal <-
       dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * pd_site + epsilon)) |> 
       dplyr::group_by(site, pd_site, pd_site_unscaled) |> 
       dplyr::summarise(mean = mean(p), 
-                       l95 = quantile(p, c(0.025)), 
-                       u95 = quantile(p, c(0.975))) |> 
+                       l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                       u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
       dplyr::full_join(site_key) |> 
       tibble::add_column(scale = "Metacommunity") |> 
       dplyr::rename(xcoord = x,
@@ -832,8 +833,8 @@ n_marginal <-
       dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * n_site + epsilon)) |> 
       dplyr::group_by(site, n_site, n_site_unscaled) |> 
       dplyr::summarise(mean = mean(p), 
-                       l95 = quantile(p, c(0.025)), 
-                       u95 = quantile(p, c(0.975))) |> 
+                       l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                       u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
       dplyr::full_join(site_key) |> 
       tibble::add_column(scale = "Metacommunity") |> 
       dplyr::rename(xcoord = x, 
@@ -856,8 +857,8 @@ shan_com_marginal <- MCMCvis::MCMCpstr( shan_plot, params = c("mu_gamma0"), type
   dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * x)) |> 
   dplyr::group_by(x, x_unscaled, metric, scale) |> 
   dplyr::summarise(mean = mean(p), 
-                   l95 = quantile(p, c(0.025)), 
-                   u95 = quantile(p, c(0.975))) |> 
+                   l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                   u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
   dplyr::full_join(
     
     MCMCvis::MCMCpstr( shan_site, params = c("mu_gamma0"), type = "chains")[[1]] |>
@@ -874,8 +875,8 @@ shan_com_marginal <- MCMCvis::MCMCpstr( shan_plot, params = c("mu_gamma0"), type
       dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * x)) |> 
       dplyr::group_by(x, x_unscaled, metric, scale) |> 
       dplyr::summarise(mean = mean(p), 
-                       l95 = quantile(p, c(0.025)), 
-                       u95 = quantile(p, c(0.975))))
+                       l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                       u95 = quantile(p, c(0.975), na.rm = TRUE)))
 
 shan_marginal <-
   MCMCvis::MCMCpstr( shan_plot, params = c("mu_gamma0"), type = "chains")[[1]] |>
@@ -898,8 +899,8 @@ shan_marginal <-
   dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * shan_plot + epsilon)) |> 
   dplyr::group_by(site, shan_plot, shan_plot_unscaled) |> 
   dplyr::summarise(mean = mean(p), 
-                   l95 = quantile(p, c(0.025)), 
-                   u95 = quantile(p, c(0.975))) |> 
+                   l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                   u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
   dplyr::full_join(site_key) |> 
   tibble::add_column(scale = "Local community") |> 
   dplyr::rename(xcoord = x, 
@@ -927,8 +928,8 @@ shan_marginal <-
       dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * shan_site + epsilon)) |> 
       dplyr::group_by(site, shan_site, shan_site_unscaled) |> 
       dplyr::summarise(mean = mean(p), 
-                       l95 = quantile(p, c(0.025)), 
-                       u95 = quantile(p, c(0.975))) |> 
+                       l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                       u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
       dplyr::full_join(site_key) |> 
       tibble::add_column(scale = "Metacommunity") |> 
       dplyr::rename(xcoord = x, 
@@ -993,8 +994,8 @@ faith_marginal <-
   dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * faith_plot + epsilon)) |> 
   dplyr::group_by(site, faith_plot, faith_plot_unscaled) |> 
   dplyr::summarise(mean = mean(p), 
-                   l95 = quantile(p, c(0.025)), 
-                   u95 = quantile(p, c(0.975))) |> 
+                   l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                   u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
   dplyr::full_join(site_key) |> 
   tibble::add_column(scale = "Local community") |> 
   dplyr::rename(xcoord = x, 
@@ -1022,8 +1023,8 @@ faith_marginal <-
       dplyr::mutate( p = plogis( mu_gamma0 + gamma1 * faith_site + epsilon)) |> 
       dplyr::group_by(site, faith_site, faith_site_unscaled) |> 
       dplyr::summarise(mean = mean(p), 
-                       l95 = quantile(p, c(0.025)), 
-                       u95 = quantile(p, c(0.975))) |> 
+                       l95 = quantile(p, c(0.025), na.rm = TRUE), 
+                       u95 = quantile(p, c(0.975), na.rm = TRUE)) |> 
       dplyr::full_join(site_key) |> 
       tibble::add_column(scale = "Metacommunity") |> 
       dplyr::rename(xcoord = x, 
