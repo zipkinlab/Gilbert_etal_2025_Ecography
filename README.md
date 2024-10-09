@@ -1,8 +1,7 @@
 # Code for idiosyncratic spatial scaling of biodiversity–disease relationships 
 __________________________________________________________________________________________________________________________________________
 
-### Authors: [Neil A. Gilbert](https://gilbertecology.com), [Graziella V. DiRenzo](https://grazielladirenzo.weebly.com/), [Elise F. Zipkin](https://zipkinlab.org/)
-
+### Authors: Neil A. Gilbert, Graziella V. DiRenzo, Elise F. Zipkin
 #### Please contact the first author for questions about the code or data: Neil A. Gilbert (neil.allen.gilbert@gmail.com)
 __________________________________________________________________________________________________________________________________________
 
