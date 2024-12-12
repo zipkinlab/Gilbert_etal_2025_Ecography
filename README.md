@@ -29,7 +29,7 @@ ________________________________________________________________________________
 
 This repository contains data and code supporting the Gilbert et. al (in press). The objective of the paper is to evaluate how estimated relationships between Lyme disease risk and host biodiversity change when host biodiversity is quantified at different spatial scales. Data come from the National Ecological Observatory Network's small mammal monitoring program. Data are freely available at the [NEON Data Portal](https://data.neonscience.org/home) and are provided in this repository for ease of reproducing analyses. The code (see Repository Directory below) includes scripts to format data, fit models, interpret results, and create figures. 
 
-Manuscript citation
+**Manuscript citation**.
 Gilbert, N.A., G.V. DiRenzo, and E.F. Zipkin. In press. Idiosyncratic spatial scaling of biodiversity–disease relationships. _Ecography_
 __________________________________________________________________________________________________________________________________________
 
