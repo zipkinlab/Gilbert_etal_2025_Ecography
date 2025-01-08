@@ -22,11 +22,11 @@ USGS Information Product Data System (IPDS) no.: IP-165614
 __________________________________________________________________________________________________________________________________________
 ### Citation for Software
 
-Gilbert, N.A., G. V. DiRenzo, & E. F. Zipkin. Code for idiosyncratic spatial scaling of biodiversity–disease relationships. Version 1.0.0; U.S. Geological Survey software release. Reston, VA. https://doi.org/10.5066/P13P2VWG
+Gilbert, N.A., G. V. DiRenzo, & E. F. Zipkin. 2025. Code for idiosyncratic spatial scaling of biodiversity–disease relationships. Version 1.0.0; U.S. Geological Survey software release. Reston, VA. https://doi.org/10.5066/P13P2VWG
 __________________________________________________________________________________________________________________________________________
 ### Citation for Associated Manuscript
 
-Gilbert, N.A., G.V. DiRenzo, and E.F. Zipkin. 2025. Idiosyncratic spatial scaling of biodiversity–disease relationships. Ecography.
+Gilbert, N.A., G.V. DiRenzo, & E.F. Zipkin. 2025. Idiosyncratic spatial scaling of biodiversity–disease relationships. Ecography.
 __________________________________________________________________________________________________________________________________________
 ### Repository description
 
