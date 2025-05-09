@@ -2,6 +2,9 @@
 __________________________________________________________________________________________________________________________________________
 
 ### Authors: Neil A. Gilbert, Graziella V. DiRenzo, Elise F. Zipkin
+
+### Ecography
+
 #### Please contact the first author for questions about the code or data: Neil A. Gilbert (neil.allen.gilbert@gmail.com)
 __________________________________________________________________________________________________________________________________________
 
