@@ -1,7 +1,7 @@
 ## Repository Directory
 
 ### [code](./code): Contains code for downloading, formatting, analyzing, and visualizing data
- * [01_download_neon_data.R](./code/01_download_neon_data.R) Script to download relevant NEON data products
+ * [01_download_neon_data.R](01_download_neon_data.R) Script to download relevant NEON data products
  * [02_format_capture_recapture_data.R](./code/02_format_capture_recapture_data.R) Prepare small mammal trapping data for model
  * [03_run_capture_recapture_model.R](./code/03_run_capture_recapture_model.R) Run the multispecies, spatially-stratified capture-recapture (MSSCR) model
  * [04_wrangle_biodiversity_metrics.R](./code/04_wrangle_biodiversity_metrics.R) Script to derive biodiversity metrics from MSSCR model posterior
