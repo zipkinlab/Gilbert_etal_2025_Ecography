@@ -1,6 +1,6 @@
 ## Repository Directory
 
-* [code_for_figures](./code_for_figures) Folder with scripts to create figures
+* code_for_figures: Folder with scripts to create figures
    * [01_figure_01.R](./code_for_01_figure_01.R) Create figure 1 (Map of NEON site/plot sampling structure)
    * [02_figure_02.R](./code_for_02_figure_02.R) Create Figure 2 (Map of biodiversity metrics) 
    * [03_figure_03_04.R](./code_for_03_figure_03_04.R) Create Figures 3 (coefficient plot) and 4 (marginal effects)
